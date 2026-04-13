@@ -3,7 +3,7 @@ import { useApp } from '../../../data/AppContext';
 import { currentUserId, users, teamMembers } from '../../../data/seed';
 import { Checkbox } from '../../common/Checkbox';
 import { Avatar } from '../../common/Avatar';
-import { Badge } from '../../common/Badge';
+// Badge available for future use
 import {
   ChevronDown, ChevronRight, ChevronLeft, Filter, ArrowUpDown,
   Group, Search, Share2, Plus, X, Calendar as CalendarIcon,
@@ -159,7 +159,7 @@ function CollaboratorPicker({ taskId, onClose }: { taskId: string; onClose: () =
   }, [onClose]);
 
   // Get team members for this task's project
-  const project = task ? undefined : undefined; // we'll just show all users
+  // Show all users regardless of project
   const allTeamUserIds = [...new Set(teamMembers.map(tm => tm.userId))];
   const teamUsers = users.filter(u => allTeamUserIds.includes(u.id));
 
@@ -398,7 +398,7 @@ export function MyTasksPage() {
 
   const toggleCollapse = (s: string) => setCollapsed(prev => { const n = new Set(prev); n.has(s) ? n.delete(s) : n.add(s); return n; });
 
-  const handleAdd = (section: string) => {
+  const handleAdd = (_section: string) => {
     if (!newTitle.trim()) return;
     addTask({ title: newTitle.trim(), sectionId: 's1', projectId: 'p1', assigneeId: currentUserId });
     setNewTitle('');

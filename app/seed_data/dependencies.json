@@ -1,0 +1,17 @@
+[
+  { "task_id": "tsk_010", "depends_on_task_id": "tsk_009", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_011", "depends_on_task_id": "tsk_010", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_006", "depends_on_task_id": "tsk_001", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_006", "depends_on_task_id": "tsk_005", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_008", "depends_on_task_id": "tsk_006", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_023", "depends_on_task_id": "tsk_021", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_023", "depends_on_task_id": "tsk_022", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_025", "depends_on_task_id": "tsk_020", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_024", "depends_on_task_id": "tsk_021", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_042", "depends_on_task_id": "tsk_040", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_045", "depends_on_task_id": "tsk_041", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_064", "depends_on_task_id": "tsk_061", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_064", "depends_on_task_id": "tsk_062", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_074", "depends_on_task_id": "tsk_070", "dependency_type": "blocked_by" },
+  { "task_id": "tsk_074", "depends_on_task_id": "tsk_071", "dependency_type": "blocked_by" }
+]

@@ -1,0 +1,17 @@
+[
+  { "id": "tag_001", "name": "Bug", "color": "#e8384f", "organization_id": "org_001" },
+  { "id": "tag_002", "name": "Feature", "color": "#4186e0", "organization_id": "org_001" },
+  { "id": "tag_003", "name": "Urgent", "color": "#fd612c", "organization_id": "org_001" },
+  { "id": "tag_004", "name": "Design", "color": "#aa62e3", "organization_id": "org_001" },
+  { "id": "tag_005", "name": "Backend", "color": "#62d26f", "organization_id": "org_001" },
+  { "id": "tag_006", "name": "Frontend", "color": "#37c5ab", "organization_id": "org_001" },
+  { "id": "tag_007", "name": "Documentation", "color": "#8da3a6", "organization_id": "org_001" },
+  { "id": "tag_008", "name": "Performance", "color": "#fd9a00", "organization_id": "org_001" },
+  { "id": "tag_009", "name": "Security", "color": "#e8384f", "organization_id": "org_001" },
+  { "id": "tag_010", "name": "UX", "color": "#7a6ff0", "organization_id": "org_001" },
+  { "id": "tag_011", "name": "Research", "color": "#20aaea", "organization_id": "org_001" },
+  { "id": "tag_012", "name": "Testing", "color": "#a4cf30", "organization_id": "org_001" },
+  { "id": "tag_013", "name": "Blocked", "color": "#e362e3", "organization_id": "org_001" },
+  { "id": "tag_014", "name": "Quick Win", "color": "#eec300", "organization_id": "org_001" },
+  { "id": "tag_015", "name": "Tech Debt", "color": "#8da3a6", "organization_id": "org_001" }
+]

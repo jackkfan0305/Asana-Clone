@@ -1,0 +1,17 @@
+[
+  { "project_id": "prj_001", "user_id": "usr_005", "role": "owner" },
+  { "project_id": "prj_001", "user_id": "usr_008", "role": "editor" },
+  { "project_id": "prj_001", "user_id": "usr_003", "role": "editor" },
+  { "project_id": "prj_002", "user_id": "usr_002", "role": "owner" },
+  { "project_id": "prj_002", "user_id": "usr_003", "role": "editor" },
+  { "project_id": "prj_002", "user_id": "usr_007", "role": "editor" },
+  { "project_id": "prj_003", "user_id": "usr_006", "role": "owner" },
+  { "project_id": "prj_003", "user_id": "usr_005", "role": "editor" },
+  { "project_id": "prj_004", "user_id": "usr_003", "role": "owner" },
+  { "project_id": "prj_004", "user_id": "usr_002", "role": "editor" },
+  { "project_id": "prj_004", "user_id": "usr_007", "role": "editor" },
+  { "project_id": "prj_005", "user_id": "usr_008", "role": "owner" },
+  { "project_id": "prj_005", "user_id": "usr_005", "role": "editor" },
+  { "project_id": "prj_006", "user_id": "usr_002", "role": "owner" },
+  { "project_id": "prj_006", "user_id": "usr_003", "role": "editor" }
+]

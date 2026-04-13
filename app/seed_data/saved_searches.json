@@ -1,0 +1,7 @@
+[
+  { "id": "ss_001", "user_id": "usr_002", "name": "My overdue tasks", "filters_json": {"assignee": ["usr_002"], "completed": false, "due_date": {"before": "2026-04-01"}} },
+  { "id": "ss_002", "user_id": "usr_002", "name": "High priority bugs", "filters_json": {"tags": ["tag_001"], "priority": ["high"], "completed": false} },
+  { "id": "ss_003", "user_id": "usr_005", "name": "Design tasks in review", "filters_json": {"tags": ["tag_004"], "project": ["prj_001", "prj_005"], "completed": false} },
+  { "id": "ss_004", "user_id": "usr_003", "name": "Unassigned engineering tasks", "filters_json": {"assignee": [], "project": ["prj_002", "prj_004"], "completed": false} },
+  { "id": "ss_005", "user_id": "usr_006", "name": "Marketing campaign tasks", "filters_json": {"project": ["prj_003"], "completed": false} }
+]

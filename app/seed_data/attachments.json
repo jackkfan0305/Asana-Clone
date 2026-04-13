@@ -1,0 +1,12 @@
+[
+  { "id": "att_001", "task_id": "tsk_001", "filename": "homepage-wireframe-v2.png", "url": "/static/attachments/homepage-wireframe-v2.png", "file_size": 245000, "mime_type": "image/png", "uploaded_by": "usr_005" },
+  { "id": "att_002", "task_id": "tsk_003", "filename": "color-palette.sketch", "url": "/static/attachments/color-palette.sketch", "file_size": 1200000, "mime_type": "application/sketch", "uploaded_by": "usr_005" },
+  { "id": "att_003", "task_id": "tsk_020", "filename": "api-v2-spec.pdf", "url": "/static/attachments/api-v2-spec.pdf", "file_size": 890000, "mime_type": "application/pdf", "uploaded_by": "usr_002" },
+  { "id": "att_004", "task_id": "tsk_025", "filename": "endpoint-migration-checklist.csv", "url": "/static/attachments/endpoint-migration-checklist.csv", "file_size": 15000, "mime_type": "text/csv", "uploaded_by": "usr_007" },
+  { "id": "att_005", "task_id": "tsk_040", "filename": "campaign-brief.docx", "url": "/static/attachments/campaign-brief.docx", "file_size": 340000, "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "uploaded_by": "usr_006" },
+  { "id": "att_006", "task_id": "tsk_045", "filename": "social-media-templates.png", "url": "/static/attachments/social-media-templates.png", "file_size": 560000, "mime_type": "image/png", "uploaded_by": "usr_006" },
+  { "id": "att_007", "task_id": "tsk_060", "filename": "app-screenshots.png", "url": "/static/attachments/app-screenshots.png", "file_size": 780000, "mime_type": "image/png", "uploaded_by": "usr_003" },
+  { "id": "att_008", "task_id": "tsk_070", "filename": "button-component-spec.pdf", "url": "/static/attachments/button-component-spec.pdf", "file_size": 120000, "mime_type": "application/pdf", "uploaded_by": "usr_008" },
+  { "id": "att_009", "task_id": "tsk_070", "filename": "button-variants.sketch", "url": "/static/attachments/button-variants.sketch", "file_size": 950000, "mime_type": "application/sketch", "uploaded_by": "usr_008" },
+  { "id": "att_010", "task_id": "tsk_085", "filename": "sprint-velocity-report.csv", "url": "/static/attachments/sprint-velocity-report.csv", "file_size": 8000, "mime_type": "text/csv", "uploaded_by": "usr_002" }
+]

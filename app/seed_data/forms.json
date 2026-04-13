@@ -1,0 +1,28 @@
+[
+  {
+    "id": "form_001",
+    "project_id": "prj_002",
+    "name": "Bug Report",
+    "description": "Submit a bug report for the API v2 Migration project",
+    "fields_json": [
+      { "label": "Bug Title", "type": "text", "required": true },
+      { "label": "Severity", "type": "dropdown", "required": true, "options": ["Critical", "High", "Medium", "Low"] },
+      { "label": "Steps to Reproduce", "type": "text", "required": true },
+      { "label": "Expected Behavior", "type": "text", "required": false }
+    ],
+    "active": true
+  },
+  {
+    "id": "form_002",
+    "project_id": "prj_001",
+    "name": "Feature Request",
+    "description": "Submit a feature request for the Website Redesign project",
+    "fields_json": [
+      { "label": "Feature Title", "type": "text", "required": true },
+      { "label": "Priority", "type": "dropdown", "required": true, "options": ["Must have", "Should have", "Nice to have"] },
+      { "label": "Description", "type": "text", "required": true },
+      { "label": "Use Case", "type": "text", "required": false }
+    ],
+    "active": true
+  }
+]

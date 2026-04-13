@@ -1,0 +1,7 @@
+[
+  { "id": "cf_001", "name": "Status", "field_type": "dropdown", "organization_id": "org_001" },
+  { "id": "cf_002", "name": "Priority", "field_type": "dropdown", "organization_id": "org_001" },
+  { "id": "cf_003", "name": "Effort", "field_type": "number", "organization_id": "org_001" },
+  { "id": "cf_004", "name": "Reviewer", "field_type": "people", "organization_id": "org_001" },
+  { "id": "cf_005", "name": "Approved", "field_type": "checkbox", "organization_id": "org_001" }
+]

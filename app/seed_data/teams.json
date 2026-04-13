@@ -1,0 +1,5 @@
+[
+  { "id": "team_001", "name": "Engineering", "description": "Core engineering team", "organization_id": "org_001" },
+  { "id": "team_002", "name": "Design", "description": "Product design team", "organization_id": "org_001" },
+  { "id": "team_003", "name": "Marketing", "description": "Marketing and growth team", "organization_id": "org_001" }
+]

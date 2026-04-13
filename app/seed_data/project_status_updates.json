@@ -1,0 +1,10 @@
+[
+  { "id": "psu_001", "project_id": "prj_001", "author_id": "usr_005", "status": "on_track", "text": "Homepage wireframes approved. Moving into high-fidelity mockups this week. On track for April 15 milestone.", "created_at": "2026-04-03T10:00:00Z" },
+  { "id": "psu_002", "project_id": "prj_002", "author_id": "usr_002", "status": "at_risk", "text": "User auth migration complete but projects endpoint migration is behind schedule. Need to reassess timeline for remaining endpoints.", "created_at": "2026-04-05T14:00:00Z" },
+  { "id": "psu_003", "project_id": "prj_003", "author_id": "usr_006", "status": "on_track", "text": "Content calendar finalized. Blog post series planned. Social templates in review with design team.", "created_at": "2026-04-04T11:00:00Z" },
+  { "id": "psu_004", "project_id": "prj_004", "author_id": "usr_003", "status": "on_track", "text": "CI/CD pipeline green on both platforms. Login screen implementation started. Beta test recruitment at 35/50.", "created_at": "2026-04-06T09:00:00Z" },
+  { "id": "psu_005", "project_id": "prj_005", "author_id": "usr_008", "status": "off_track", "text": "Button component shipped but color tokens need revision after accessibility audit. Falling behind on documentation.", "created_at": "2026-04-02T16:00:00Z" },
+  { "id": "psu_006", "project_id": "prj_006", "author_id": "usr_002", "status": "on_track", "text": "Sprint 1 tasks all assigned. Velocity looking good. Planning Sprint 2 next week.", "created_at": "2026-04-07T10:00:00Z" },
+  { "id": "psu_007", "project_id": "prj_001", "author_id": "usr_005", "status": "on_track", "text": "Navigation component coded and responsive. Hero section mockup approved by stakeholders.", "created_at": "2026-04-08T15:00:00Z" },
+  { "id": "psu_008", "project_id": "prj_002", "author_id": "usr_002", "status": "at_risk", "text": "Rate limiting implementation more complex than expected. Pushing back non-critical endpoints to next sprint.", "created_at": "2026-04-09T11:00:00Z" }
+]
