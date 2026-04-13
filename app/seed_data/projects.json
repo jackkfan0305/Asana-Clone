@@ -1,0 +1,8 @@
+[
+  { "id": "prj_001", "name": "Website Redesign", "description": "Complete redesign of the company website", "team_id": "team_002", "owner_id": "usr_005", "color": "#4186e0", "icon": "🌐", "status": "on_track", "default_view": "list" },
+  { "id": "prj_002", "name": "API v2 Migration", "description": "Migrate all endpoints from v1 to v2 REST API", "team_id": "team_001", "owner_id": "usr_002", "color": "#62d26f", "icon": "🔧", "status": "at_risk", "default_view": "list" },
+  { "id": "prj_003", "name": "Q2 Marketing Campaign", "description": "Q2 2026 marketing campaign planning and execution", "team_id": "team_003", "owner_id": "usr_006", "color": "#aa62e3", "icon": "📣", "status": "on_track", "default_view": "board" },
+  { "id": "prj_004", "name": "Mobile App Launch", "description": "Launch the mobile app for iOS and Android", "team_id": "team_001", "owner_id": "usr_003", "color": "#fd612c", "icon": "📱", "status": "on_track", "default_view": "board" },
+  { "id": "prj_005", "name": "Design System", "description": "Build and document the design system components", "team_id": "team_002", "owner_id": "usr_008", "color": "#37c5ab", "icon": "🎨", "status": "off_track", "default_view": "list" },
+  { "id": "prj_006", "name": "Sprint Planning", "description": "Engineering sprint planning and tracking", "team_id": "team_001", "owner_id": "usr_002", "color": "#eec300", "icon": "🏃", "status": "on_track", "default_view": "board" }
+]

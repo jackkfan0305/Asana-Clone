@@ -1,0 +1,7 @@
+[
+  { "id": "goal_001", "name": "Increase revenue 20%", "description": "Grow annual revenue by 20% through new product launches and market expansion", "owner_id": "usr_001", "team_id": null, "time_period": "FY2026", "status": "on_track", "progress": 35, "parent_goal_id": null },
+  { "id": "goal_002", "name": "Improve NPS to 50+", "description": "Raise Net Promoter Score from 38 to 50+ through product quality and support improvements", "owner_id": "usr_001", "team_id": null, "time_period": "FY2026", "status": "at_risk", "progress": 22, "parent_goal_id": null },
+  { "id": "goal_003", "name": "Launch mobile app by Q2", "description": "Ship iOS and Android apps with feature parity to web", "owner_id": "usr_003", "team_id": "team_001", "time_period": "Q2 2026", "status": "on_track", "progress": 60, "parent_goal_id": "goal_001" },
+  { "id": "goal_004", "name": "Complete API v2 migration", "description": "Migrate all endpoints and deprecate v1 API", "owner_id": "usr_002", "team_id": "team_001", "time_period": "Q2 2026", "status": "at_risk", "progress": 45, "parent_goal_id": "goal_002" },
+  { "id": "goal_005", "name": "Ship design system v1", "description": "Document and publish all core design components", "owner_id": "usr_008", "team_id": "team_002", "time_period": "Q1 2026", "status": "off_track", "progress": 85, "parent_goal_id": null }
+]

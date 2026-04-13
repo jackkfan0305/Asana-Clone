@@ -1,0 +1,10 @@
+[
+  { "id": "cfo_001", "custom_field_id": "cf_001", "name": "Not Started", "color": "#8da3a6", "position": 0 },
+  { "id": "cfo_002", "custom_field_id": "cf_001", "name": "In Progress", "color": "#20aaea", "position": 1 },
+  { "id": "cfo_003", "custom_field_id": "cf_001", "name": "In Review", "color": "#7a6ff0", "position": 2 },
+  { "id": "cfo_004", "custom_field_id": "cf_001", "name": "Complete", "color": "#62d26f", "position": 3 },
+  { "id": "cfo_005", "custom_field_id": "cf_002", "name": "Critical", "color": "#e8384f", "position": 0 },
+  { "id": "cfo_006", "custom_field_id": "cf_002", "name": "High", "color": "#fd612c", "position": 1 },
+  { "id": "cfo_007", "custom_field_id": "cf_002", "name": "Medium", "color": "#fd9a00", "position": 2 },
+  { "id": "cfo_008", "custom_field_id": "cf_002", "name": "Low", "color": "#a4cf30", "position": 3 }
+]

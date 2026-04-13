@@ -1,0 +1,7 @@
+[
+  { "portfolio_id": "port_001", "project_id": "prj_001", "position": 0 },
+  { "portfolio_id": "port_001", "project_id": "prj_002", "position": 1 },
+  { "portfolio_id": "port_001", "project_id": "prj_004", "position": 2 },
+  { "portfolio_id": "port_002", "project_id": "prj_003", "position": 0 },
+  { "portfolio_id": "port_002", "project_id": "prj_005", "position": 1 }
+]

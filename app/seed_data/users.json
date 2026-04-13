@@ -1,0 +1,10 @@
+[
+  { "id": "usr_001", "username": "admin", "password_hash": "admin", "name": "Admin User", "role": "admin", "email": "admin@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_002", "username": "sarah.connor", "password_hash": "password", "name": "Sarah Connor", "role": "standard", "email": "sarah@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_003", "username": "john.smith", "password_hash": "password", "name": "John Smith", "role": "standard", "email": "john@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_004", "username": "viewer", "password_hash": "password", "name": "View Only", "role": "viewer", "email": "viewer@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_005", "username": "emily.chen", "password_hash": "password", "name": "Emily Chen", "role": "standard", "email": "emily@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_006", "username": "marcus.johnson", "password_hash": "password", "name": "Marcus Johnson", "role": "standard", "email": "marcus@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_007", "username": "alex.rivera", "password_hash": "password", "name": "Alex Rivera", "role": "standard", "email": "alex@acme.corp", "avatar_url": null, "organization_id": "org_001" },
+  { "id": "usr_008", "username": "priya.patel", "password_hash": "password", "name": "Priya Patel", "role": "standard", "email": "priya@acme.corp", "avatar_url": null, "organization_id": "org_001" }
+]

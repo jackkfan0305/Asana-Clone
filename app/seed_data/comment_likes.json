@@ -1,0 +1,12 @@
+[
+  { "comment_id": "cmt_001", "user_id": "usr_008" },
+  { "comment_id": "cmt_001", "user_id": "usr_001" },
+  { "comment_id": "cmt_003", "user_id": "usr_005" },
+  { "comment_id": "cmt_004", "user_id": "usr_005" },
+  { "comment_id": "cmt_005", "user_id": "usr_008" },
+  { "comment_id": "cmt_006", "user_id": "usr_007" },
+  { "comment_id": "cmt_007", "user_id": "usr_002" },
+  { "comment_id": "cmt_010", "user_id": "usr_001" },
+  { "comment_id": "cmt_013", "user_id": "usr_002" },
+  { "comment_id": "cmt_020", "user_id": "usr_007" }
+]

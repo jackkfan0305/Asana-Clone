@@ -1,0 +1,8 @@
+[
+  { "team_id": "team_001", "user_id": "usr_002", "role": "admin" },
+  { "team_id": "team_001", "user_id": "usr_003", "role": "member" },
+  { "team_id": "team_001", "user_id": "usr_007", "role": "member" },
+  { "team_id": "team_002", "user_id": "usr_005", "role": "admin" },
+  { "team_id": "team_002", "user_id": "usr_008", "role": "member" },
+  { "team_id": "team_003", "user_id": "usr_006", "role": "admin" }
+]

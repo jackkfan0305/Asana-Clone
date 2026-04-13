@@ -1,0 +1,6 @@
+[
+  { "id": "msg_001", "project_id": "prj_001", "author_id": "usr_005", "subject": "Homepage redesign kickoff", "body": "Hey team, let's align on the homepage redesign direction. I've attached the initial wireframes for review. Please share feedback by end of week.", "created_at": "2026-03-20T10:00:00Z" },
+  { "id": "msg_002", "project_id": "prj_001", "author_id": "usr_008", "subject": "Design system integration plan", "body": "I've been reviewing how we can leverage the design system tokens for the website redesign. Let's discuss the integration approach in our next sync.", "created_at": "2026-03-25T14:30:00Z" },
+  { "id": "msg_003", "project_id": "prj_002", "author_id": "usr_002", "subject": "API v2 breaking changes", "body": "Heads up — the v2 migration will introduce breaking changes to the auth endpoints. We need to coordinate with frontend to update the client SDK. Let's discuss timeline.", "created_at": "2026-03-22T09:00:00Z" },
+  { "id": "msg_004", "project_id": "prj_002", "author_id": "usr_007", "subject": "Performance benchmarks for v2", "body": "I ran initial benchmarks comparing v1 and v2 endpoints. The new pagination approach shows 40% improvement on large datasets. Full report attached.", "created_at": "2026-03-28T16:00:00Z" }
+]

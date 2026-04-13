@@ -1,0 +1,14 @@
+[
+  { "id": "wid_001", "user_id": "usr_002", "widget_type": "my_tasks", "position": 0, "config_json": {} },
+  { "id": "wid_002", "user_id": "usr_002", "widget_type": "projects", "position": 1, "config_json": {} },
+  { "id": "wid_003", "user_id": "usr_002", "widget_type": "notepad", "position": 2, "config_json": { "content": "Sprint goals:\n- Complete API migration\n- Ship mobile app beta\n- Review design system components" } },
+  { "id": "wid_004", "user_id": "usr_003", "widget_type": "my_tasks", "position": 0, "config_json": {} },
+  { "id": "wid_005", "user_id": "usr_003", "widget_type": "projects", "position": 1, "config_json": {} },
+  { "id": "wid_006", "user_id": "usr_003", "widget_type": "notepad", "position": 2, "config_json": { "content": "Mobile app launch checklist:\n- App store listing ready\n- Beta testing complete\n- Marketing assets prepared" } },
+  { "id": "wid_007", "user_id": "usr_005", "widget_type": "my_tasks", "position": 0, "config_json": {} },
+  { "id": "wid_008", "user_id": "usr_005", "widget_type": "projects", "position": 1, "config_json": {} },
+  { "id": "wid_009", "user_id": "usr_005", "widget_type": "notepad", "position": 2, "config_json": { "content": "Design review notes:\n- Homepage needs more contrast\n- Navigation should be sticky\n- Consider dark mode toggle" } },
+  { "id": "wid_010", "user_id": "usr_006", "widget_type": "my_tasks", "position": 0, "config_json": {} },
+  { "id": "wid_011", "user_id": "usr_006", "widget_type": "projects", "position": 1, "config_json": {} },
+  { "id": "wid_012", "user_id": "usr_006", "widget_type": "notepad", "position": 2, "config_json": { "content": "Q2 campaign priorities:\n- Blog series launch\n- Social media strategy\n- Email automation setup" } }
+]

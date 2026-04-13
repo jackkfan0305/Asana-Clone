@@ -6,7 +6,7 @@ import { Filter, ArrowUpDown, Rows3, MoreHorizontal, Plus, X, Sparkles, ChevronD
 type Tab = 'activity' | 'bookmarks' | 'archive' | 'mentioned';
 
 export function InboxPage() {
-  const { notifications, markRead, archive, archiveAll, setSelectedTaskId } = useApp();
+  const { notifications, markRead, archiveAll, setSelectedTaskId } = useApp();
   const [tab, setTab] = useState<Tab>('activity');
   const [showSummary, setShowSummary] = useState(true);
 
