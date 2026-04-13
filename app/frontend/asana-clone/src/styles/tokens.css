@@ -1,0 +1,91 @@
+/* Design Tokens from Asana — Dark Mode */
+:root {
+  /* Backgrounds */
+  --bg-icon-rail: #2e2f31;
+  --bg-sidebar: #2e2f31;
+  --bg-sidebar-hover: #3a3b3d;
+  --bg-sidebar-selected: #404142;
+  --bg-topbar: #2e2f31;
+  --bg-content: #1e1f21;
+  --bg-card: #2a2b2d;
+  --bg-row-hover: #333435;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.6);
+  --bg-input: #353638;
+
+  /* Brand / Action */
+  --color-create: #e8534b;
+  --color-create-hover: #d64840;
+  --color-primary: #4573d2;
+  --color-success: #5da283;
+  --color-warning: #f1bd6c;
+  --color-error: #e8384f;
+
+  /* Text */
+  --text-primary: #f1f1f1;
+  --text-secondary: #a2a0a2;
+  --text-placeholder: #6d6e6f;
+  --text-icon-rail: #8a8a8a;
+  --text-sidebar: #c8c8c8;
+  --text-sidebar-active: #ffffff;
+  --text-link: #4573d2;
+
+  /* Borders */
+  --border-default: #3a3b3d;
+  --border-divider: #353638;
+  --border-input: #4a4b4d;
+  --border-input-focus: #4573d2;
+  --border-table: #353638;
+
+  /* Status Colors */
+  --status-red: #e8384f;
+  --status-orange: #fd612c;
+  --status-yellow-orange: #fd9a00;
+  --status-yellow: #eec300;
+  --status-yellow-green: #a4cf30;
+  --status-green: #62d26f;
+  --status-blue-green: #37c5ab;
+  --status-aqua: #20aaea;
+  --status-blue: #4186e0;
+  --status-indigo: #7a6ff0;
+  --status-purple: #aa62e3;
+  --status-pink: #e362e3;
+  --status-cool-gray: #8da3a6;
+
+  /* Typography */
+  --font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-h1: 500 20px/1.2 var(--font-family);
+  --font-h2: 500 16px/1.2 var(--font-family);
+  --font-h3: 600 14px/1.2 var(--font-family);
+  --font-body: 400 13px/1.45 var(--font-family);
+  --font-small: 400 11px/1.4 var(--font-family);
+
+  /* Spacing */
+  --sp-xs: 4px;
+  --sp-sm: 8px;
+  --sp-md: 12px;
+  --sp-lg: 16px;
+  --sp-xl: 24px;
+  --sp-xxl: 32px;
+
+  /* Border Radius */
+  --radius-btn: 6px;
+  --radius-card: 8px;
+  --radius-input: 6px;
+  --radius-avatar: 50%;
+  --radius-pill: 12px;
+  --radius-modal: 12px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-dropdown: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-modal: 0 8px 24px rgba(0,0,0,0.2);
+
+  /* Layout */
+  --icon-rail-width: 56px;
+  --sidebar-panel-width: 200px;
+  --sidebar-width: 256px;
+  --topbar-height: 48px;
+  --row-height: 36px;
+  --board-card-width: 260px;
+  --board-col-width: 280px;
+}
