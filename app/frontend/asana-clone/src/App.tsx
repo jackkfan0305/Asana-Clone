@@ -32,7 +32,6 @@ import { WorkloadPage } from './components/features/workload/WorkloadPage';
 import { ReportingPage } from './components/features/reporting/ReportingPage';
 import { FormsPage } from './components/features/forms/FormsPage';
 import { TemplatesPage } from './components/features/templates/TemplatesPage';
-import { MessagesPage } from './components/features/messages/MessagesPage';
 import { ProjectOverview } from './components/features/overview/ProjectOverview';
 import { WorkflowPage } from './components/features/workflow/WorkflowPage';
 import { SettingsPage } from './components/features/settings/SettingsPage';

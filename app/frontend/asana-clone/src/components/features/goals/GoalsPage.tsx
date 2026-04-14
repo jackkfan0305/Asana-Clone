@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { goals, teams } from '../../../data/seed';
+import { goals, teams, currentUserId } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 import { StatusBadge } from '../../common/Badge';
 import { ProgressBar } from '../../common/ProgressBar';
@@ -10,7 +10,7 @@ export function GoalsPage() {
   const [tab, setTab] = useState<Tab>('team');
 
   const topLevel = goals.filter(g => !g.parentGoalId);
-  const myGoals = goals.filter(g => g.ownerId === 'u1');
+  const myGoals = goals.filter(g => g.ownerId === currentUserId);
 
   const renderGoal = (goal: typeof goals[0], depth = 0) => {
     const team = teams.find(t => t.id === goal.teamId);

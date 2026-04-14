@@ -3,9 +3,8 @@ import { useApp } from '../../../data/AppContext';
 
 export function WorkflowPage() {
   const { projectId } = useParams();
-  const { sections, tasks, projects, seed } = useApp();
-  const project = projects.find(p => p.id === (projectId || 'p1'));
-  const projectSections = sections.filter(s => s.projectId === (projectId || 'p1'));
+  const { sections, tasks } = useApp();
+  const projectSections = sections.filter(s => s.projectId === (projectId || 'prj_001'));
 
   return (
     <div>
@@ -41,7 +40,7 @@ export function WorkflowPage() {
         {/* Right panel - section automation */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {projectSections.map(section => {
-            const sectionTasks = tasks.filter(t => t.projectId === (projectId || 'p1') && t.sectionId === section.id && !t.parentTaskId);
+            const sectionTasks = tasks.filter(t => t.projectId === (projectId || 'prj_001') && t.sectionId === section.id && !t.parentTaskId);
             const incomplete = sectionTasks.filter(t => !t.completed).length;
 
             return (

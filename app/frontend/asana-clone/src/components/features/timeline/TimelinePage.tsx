@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useApp } from '../../../data/AppContext';
+import { currentUserId } from '../../../data/seed';
 import { Plus, ChevronLeft, ChevronRight, Minus, Filter, ArrowUpDown, Settings, ChevronDown, Trash2 } from 'lucide-react';
 
 type ZoomLevel = 'hours' | 'days' | 'weeks' | 'months' | 'quarters' | 'half-year' | 'years';
@@ -13,7 +14,6 @@ const ZOOM_LABELS: Record<ZoomLevel, string> = {
 type SortField = 'none' | 'start_date' | 'due_date' | 'assignee';
 
 function getQuarter(d: Date): number { return Math.floor(d.getMonth() / 3) + 1; }
-function getHalfYear(d: Date): number { return d.getMonth() < 6 ? 1 : 2; }
 
 function formatMonth(d: Date): string {
   return d.toLocaleString('en-US', { month: 'long' });
@@ -243,9 +243,9 @@ export function TimelinePage() {
   const [dragging, setDragging] = useState<{ taskId: string; edge: 'left' | 'right' | 'move'; startX: number; origStart: string; origEnd: string } | null>(null);
   const [dragPreview, setDragPreview] = useState<{ taskId: string; startDate: string; endDate: string } | null>(null);
 
-  const project = projects.find(p => p.id === (projectId || 'p1'));
-  const projectTasks = tasks.filter(t => t.projectId === (projectId || 'p1') && !t.parentTaskId && t.dueDate);
-  const projectSections = sections.filter(s => s.projectId === (projectId || 'p1'));
+  const project = projects.find(p => p.id === (projectId || 'prj_001'));
+  const projectTasks = tasks.filter(t => t.projectId === (projectId || 'prj_001') && !t.parentTaskId && t.dueDate);
+  const projectSections = sections.filter(s => s.projectId === (projectId || 'prj_001'));
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -330,7 +330,7 @@ export function TimelinePage() {
     else if (!filterIncomplete && filterCompleted) filtered = filtered.filter(t => t.completed);
     else if (!filterIncomplete && !filterCompleted) filtered = [];
 
-    if (filterJustMine) filtered = filtered.filter(t => t.assigneeId === 'u1');
+    if (filterJustMine) filtered = filtered.filter(t => t.assigneeId === currentUserId);
     if (filterDueThisWeek) filtered = filtered.filter(t => t.dueDate && new Date(t.dueDate) >= now && new Date(t.dueDate) <= thisWeekEnd);
     if (filterDueNextWeek) filtered = filtered.filter(t => t.dueDate && new Date(t.dueDate) >= nextWeekStart && new Date(t.dueDate) <= nextWeekEnd);
 

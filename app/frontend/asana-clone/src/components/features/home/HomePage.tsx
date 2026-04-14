@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Lock, Check, Users as UsersIcon, MoreHorizontal, ChevronDown, Plus, Eye, Trash2 } from 'lucide-react';
 
 export function HomePage() {
-  const { tasks, completeTask, setSelectedTaskId, seed, projects, addProject } = useApp();
+  const { tasks, completeTask, setSelectedTaskId, projects } = useApp();
   const navigate = useNavigate();
   const user = users.find(u => u.id === currentUserId)!;
   const myTasks = tasks.filter(t => t.assigneeId === currentUserId && !t.parentTaskId);

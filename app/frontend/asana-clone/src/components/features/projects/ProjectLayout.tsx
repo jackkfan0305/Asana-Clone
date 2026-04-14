@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Outlet, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../../data/AppContext';
 import { Avatar } from '../../common/Avatar';
-import type { ViewType } from '../../../types';
 
 const viewTabs: { key: string; label: string; path: string }[] = [
   { key: 'overview', label: 'Overview', path: 'overview' },
@@ -39,7 +38,7 @@ function ProjectIcon({ color }: { color: string }) {
   );
 }
 
-function StatusDropdown({ currentStatus, onSelect, onClose }: {
+function StatusDropdown({ onSelect, onClose }: {
   currentStatus: string;
   onSelect: (status: string) => void;
   onClose: () => void;

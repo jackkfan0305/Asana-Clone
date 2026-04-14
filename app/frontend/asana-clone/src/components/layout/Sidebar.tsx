@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Inbox, CircleCheck, FolderOpen, Briefcase, Target, LayoutGrid, Sparkles, ClipboardList, SlidersHorizontal, Zap, FileText, CircleDot, Package, ChevronRight, ChevronDown, Plus, Gauge, GitFork, Users } from 'lucide-react';
-import { users, currentUserId } from '../../data/seed';
+import { currentUserId } from '../../data/seed';
 import { useApp } from '../../data/AppContext';
 import { Avatar } from '../common/Avatar';
 import type { LucideIcon } from 'lucide-react';

@@ -6,6 +6,7 @@ from audit import log_audit
 from models import Notification, User
 from schema import (
     ArchiveNotificationArgs,
+    BookmarkNotificationArgs,
     BulkArchiveNotificationsArgs,
     GetNotificationsArgs,
     GetUnreadCountArgs,
@@ -26,6 +27,7 @@ def _notif_dict(n: Notification) -> dict:
         "body": n.body,
         "read": n.read,
         "archived": n.archived,
+        "bookmarked": n.bookmarked,
         "created_at": n.created_at.isoformat() if n.created_at else None,
     }
 
@@ -87,6 +89,18 @@ def bulk_archive_notifications(db: Session, args: BulkArchiveNotificationsArgs, 
     return {"is_error": False, "text": f"Archived {count} notifications", "structured_content": {"archived_count": count}}
 
 
+def bookmark_notification(db: Session, args: BookmarkNotificationArgs, current_user: User | None) -> dict:
+    n = db.query(Notification).filter(Notification.id == args.notification_id).first()
+    if not n:
+        return {"is_error": True, "text": f"Notification not found: {args.notification_id}", "structured_content": None}
+    old = n.bookmarked
+    n.bookmarked = not old
+    log_audit(db, "notifications", n.id, "UPDATE", {"bookmarked": old}, {"bookmarked": n.bookmarked},
+              current_user.id if current_user else None)
+    db.commit()
+    return {"is_error": False, "text": f"Notification {'bookmarked' if n.bookmarked else 'unbookmarked'}", "structured_content": _notif_dict(n)}
+
+
 def get_unread_count(db: Session, args: GetUnreadCountArgs, current_user: User | None) -> dict:
     uid = args.user_id or (current_user.id if current_user else None)
     if not uid:
@@ -102,5 +116,6 @@ TOOLS = [
     {"name": "mark_notification_read", "description": "Mark a notification as read or unread.", "input_schema": MarkNotificationReadArgs.model_json_schema(), "mutates_state": True, "handler": mark_notification_read},
     {"name": "archive_notification", "description": "Archive a notification.", "input_schema": ArchiveNotificationArgs.model_json_schema(), "mutates_state": True, "handler": archive_notification},
     {"name": "bulk_archive_notifications", "description": "Archive multiple notifications.", "input_schema": BulkArchiveNotificationsArgs.model_json_schema(), "mutates_state": True, "handler": bulk_archive_notifications},
+    {"name": "bookmark_notification", "description": "Toggle bookmark on a notification.", "input_schema": BookmarkNotificationArgs.model_json_schema(), "mutates_state": True, "handler": bookmark_notification},
     {"name": "get_unread_count", "description": "Get unread notification count.", "input_schema": GetUnreadCountArgs.model_json_schema(), "mutates_state": False, "handler": get_unread_count},
 ]

@@ -164,7 +164,7 @@ function OptionsPanel({ onClose }: { onClose: () => void }) {
 }
 
 /* ─── Card Context Menu ─── */
-function CardContextMenu({ task, onDelete, onClose }: {
+function CardContextMenu({ onDelete, onClose }: {
   task: Task; onDelete: () => void; onClose: () => void;
 }) {
   const ref = useClickAway(onClose);
@@ -194,7 +194,7 @@ export function ProjectBoardView() {
   const { projectId } = useParams();
   const {
     tasks, sections, completeTask, addTask, moveTask, deleteTask,
-    setSelectedTaskId, addSection, renameSection, projects, seed,
+    setSelectedTaskId, addSection, renameSection, projects,
   } = useApp();
 
   // DnD state
@@ -344,11 +344,6 @@ export function ProjectBoardView() {
 
     const draggedTask = tasks.find(t => t.id === draggedTaskId);
     if (!draggedTask) return;
-
-    // Get the tasks in this section (sorted by position)
-    const sectionTasks = projectTasks
-      .filter(t => t.sectionId === sectionId && t.id !== draggedTaskId)
-      .sort((a, b) => a.position - b.position);
 
     // Move the task to the target section
     moveTask(draggedTaskId, sectionId);

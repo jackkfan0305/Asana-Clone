@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { users, projectStatusUpdates, teamMembers } from '../../../data/seed';
+import { users, teamMembers } from '../../../data/seed';
 import { useApp } from '../../../data/AppContext';
 import { Avatar } from '../../common/Avatar';
-import { Plus, Target, Briefcase, FileText, Link, Circle, Users, User, ClipboardList } from 'lucide-react';
+import { Plus, Target, Briefcase, FileText, Link, Circle, Users } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 const statusOptions = [

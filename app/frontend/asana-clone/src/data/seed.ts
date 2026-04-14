@@ -2,38 +2,38 @@ import type { User, Organization, Team, Project, Section, Task, Comment, Tag, Cu
 
 const avatar = (id: string) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`;
 
-export const currentUserId = 'u1';
+export const currentUserId = 'usr_005';
 
-export const organization: Organization = { id: 'org1', name: 'Acme Corporation' };
+export const organization: Organization = { id: 'org_001', name: 'Acme Corp' };
 
 export const users: User[] = [
-  { id: 'u1', name: 'Jack Fan', email: 'jack@acme.com', avatarUrl: avatar('jack'), role: 'admin' },
-  { id: 'u2', name: 'Sarah Chen', email: 'sarah@acme.com', avatarUrl: avatar('sarah'), role: 'member' },
-  { id: 'u3', name: 'Marcus Rivera', email: 'marcus@acme.com', avatarUrl: avatar('marcus'), role: 'member' },
-  { id: 'u4', name: 'Emily Johnson', email: 'emily@acme.com', avatarUrl: avatar('emily'), role: 'member' },
-  { id: 'u5', name: 'Alex Kim', email: 'alex@acme.com', avatarUrl: avatar('alex'), role: 'member' },
-  { id: 'u6', name: 'Priya Patel', email: 'priya@acme.com', avatarUrl: avatar('priya'), role: 'member' },
-  { id: 'u7', name: 'David Thompson', email: 'david@acme.com', avatarUrl: avatar('david'), role: 'admin' },
-  { id: 'u8', name: 'Lisa Wong', email: 'lisa@acme.com', avatarUrl: avatar('lisa'), role: 'member' },
+  { id: 'usr_001', name: 'Admin User', email: 'admin@acme.corp', avatarUrl: avatar('admin'), role: 'admin' },
+  { id: 'usr_002', name: 'Sarah Connor', email: 'sarah@acme.corp', avatarUrl: avatar('sarah'), role: 'member' },
+  { id: 'usr_003', name: 'John Smith', email: 'john@acme.corp', avatarUrl: avatar('john'), role: 'member' },
+  { id: 'usr_004', name: 'View Only', email: 'viewer@acme.corp', avatarUrl: avatar('viewer'), role: 'member' },
+  { id: 'usr_005', name: 'Emily Chen', email: 'emily@acme.corp', avatarUrl: avatar('emily'), role: 'member' },
+  { id: 'usr_006', name: 'Marcus Johnson', email: 'marcus@acme.corp', avatarUrl: avatar('marcus'), role: 'member' },
+  { id: 'usr_007', name: 'Alex Rivera', email: 'alex@acme.corp', avatarUrl: avatar('alex'), role: 'member' },
+  { id: 'usr_008', name: 'Priya Patel', email: 'priya@acme.corp', avatarUrl: avatar('priya'), role: 'member' },
 ];
 
 export const teams: Team[] = [
-  { id: 't1', name: 'Engineering', organizationId: 'org1', description: 'Product engineering team' },
-  { id: 't2', name: 'Design', organizationId: 'org1', description: 'Product design team' },
-  { id: 't3', name: 'Marketing', organizationId: 'org1', description: 'Growth and marketing team' },
+  { id: 'team_001', name: 'Engineering', organizationId: 'org_001', description: 'Product engineering team' },
+  { id: 'team_002', name: 'Design', organizationId: 'org_001', description: 'Product design team' },
+  { id: 'team_003', name: 'Marketing', organizationId: 'org_001', description: 'Growth and marketing team' },
 ];
 
 export const teamMembers = [
-  { teamId: 't1', userId: 'u1', role: 'admin' as const },
-  { teamId: 't1', userId: 'u2', role: 'member' as const },
-  { teamId: 't1', userId: 'u3', role: 'member' as const },
-  { teamId: 't1', userId: 'u5', role: 'member' as const },
-  { teamId: 't2', userId: 'u4', role: 'admin' as const },
-  { teamId: 't2', userId: 'u6', role: 'member' as const },
-  { teamId: 't2', userId: 'u8', role: 'member' as const },
-  { teamId: 't3', userId: 'u7', role: 'admin' as const },
-  { teamId: 't3', userId: 'u6', role: 'member' as const },
-  { teamId: 't3', userId: 'u8', role: 'member' as const },
+  { teamId: 'team_001', userId: 'usr_001', role: 'admin' as const },
+  { teamId: 'team_001', userId: 'usr_002', role: 'member' as const },
+  { teamId: 'team_001', userId: 'usr_003', role: 'member' as const },
+  { teamId: 'team_001', userId: 'usr_007', role: 'member' as const },
+  { teamId: 'team_002', userId: 'usr_005', role: 'admin' as const },
+  { teamId: 'team_002', userId: 'usr_006', role: 'member' as const },
+  { teamId: 'team_002', userId: 'usr_008', role: 'member' as const },
+  { teamId: 'team_003', userId: 'usr_004', role: 'admin' as const },
+  { teamId: 'team_003', userId: 'usr_006', role: 'member' as const },
+  { teamId: 'team_003', userId: 'usr_008', role: 'member' as const },
 ];
 
 export const projects: Project[] = [

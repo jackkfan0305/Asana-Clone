@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../../data/AppContext';
-import { users, currentUserId, dependencies, teamMembers } from '../../../data/seed';
+import { users, currentUserId, teamMembers } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 import { AssigneeDropdown } from '../../common/AssigneeDropdown';
-import { StatusBadge } from '../../common/Badge';
-import { X, Calendar, Plus, Info, ChevronDown, ChevronLeft, ChevronRight, Check, UserPlus, Minus } from 'lucide-react';
+import { X, Calendar, Plus, Info, ChevronDown, ChevronLeft, ChevronRight, Check, UserPlus } from 'lucide-react';
 
 const myTaskSectionOptions = ['Recently assigned', 'Do today', 'Do next week', 'Do later'];
 
@@ -23,7 +22,7 @@ const statusOptions = [
 ];
 
 export function TaskDetailPane({ closing }: { closing?: boolean }) {
-  const { tasks, selectedTaskId, setSelectedTaskId, updateTask, completeTask, comments, addComment, likeComment, seed, projects, sections } = useApp();
+  const { tasks, selectedTaskId, setSelectedTaskId, updateTask, completeTask, comments, addComment, likeComment, projects, sections } = useApp();
   const [commentText, setCommentText] = useState('');
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState('');
@@ -143,8 +142,6 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
   };
 
   const handleRemoveProject = () => {
-    // Clear the project association
-    const firstSection = sections.find(s => s.projectId === availableProjects[0]?.id);
     updateTask(task.id, { projectId: '', sectionId: '', customFieldValues: {} });
   };
 

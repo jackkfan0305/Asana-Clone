@@ -48,6 +48,14 @@ async def lifespan(app: FastAPI):
             ))
             conn.commit()
 
+        # Migrate: add bookmarked column to notifications if it doesn't exist
+        notif_columns = [c["name"] for c in inspector.get_columns("notifications")]
+        if "bookmarked" not in notif_columns:
+            conn.execute(text(
+                "ALTER TABLE notifications ADD COLUMN bookmarked BOOLEAN DEFAULT FALSE"
+            ))
+            conn.commit()
+
     yield
 
 

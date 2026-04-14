@@ -6,7 +6,7 @@ import { StatusBadge } from '../../common/Badge';
 
 export function ProjectDashboard() {
   const { projectId } = useParams();
-  const { tasks, sections, projects, seed } = useApp();
+  const { tasks, sections, projects } = useApp();
 
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div>Project not found</div>;

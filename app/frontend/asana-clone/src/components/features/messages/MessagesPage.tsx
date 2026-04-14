@@ -1,23 +1,19 @@
-import { useParams } from 'react-router-dom';
-import { projects, users } from '../../../data/seed';
+import { users } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 
 const sampleMessages = [
-  { id: 'm1', authorId: 'u1', subject: 'Sprint kickoff notes', body: 'Here are the key items we discussed in today\'s sprint kickoff...', date: '2026-04-12' },
-  { id: 'm2', authorId: 'u2', subject: 'Design review feedback', body: 'Shared some thoughts on the latest mockups. Please review when you get a chance.', date: '2026-04-11' },
-  { id: 'm3', authorId: 'u3', subject: 'API schema changes', body: 'Heads up — we\'re making some breaking changes to the v2 endpoints.', date: '2026-04-10' },
+  { id: 'm1', authorId: 'usr_005', subject: 'Sprint kickoff notes', body: 'Here are the key items we discussed in today\'s sprint kickoff...', date: '2026-04-12' },
+  { id: 'm2', authorId: 'usr_002', subject: 'Design review feedback', body: 'Shared some thoughts on the latest mockups. Please review when you get a chance.', date: '2026-04-11' },
+  { id: 'm3', authorId: 'usr_003', subject: 'API schema changes', body: 'Heads up — we\'re making some breaking changes to the v2 endpoints.', date: '2026-04-10' },
 ];
 
 export function MessagesPage() {
-  const { projectId } = useParams();
-  const project = projects.find(p => p.id === projectId);
-
   return (
     <div>
       {/* Compose area */}
       <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', padding: 16, marginBottom: 24, border: '1px solid var(--border-default)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Avatar userId="u1" size={28} />
+          <Avatar userId="usr_005" size={28} />
           <input placeholder="Send message to members" style={{ flex: 1 }} readOnly />
           <button style={{ padding: '6px 16px', background: 'var(--color-primary)', color: '#fff', borderRadius: 'var(--radius-btn)', fontSize: 12, opacity: 0.5 }} disabled>
             Send
