@@ -211,7 +211,7 @@ function apiProjectToLocal(d: Record<string, unknown>): Project {
 
 export function useProjectStore() {
   const [projectList, setProjects] = useState<Project[]>(() => loadFromStorage('asana_projects', seed.projects));
-  const [apiLoaded, setApiLoaded] = useState(false);
+  const [, setApiLoaded] = useState(false);
 
   // Load projects from API on mount
   useEffect(() => {

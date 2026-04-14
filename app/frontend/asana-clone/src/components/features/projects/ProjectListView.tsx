@@ -140,7 +140,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 export function ProjectListView() {
   const { projectId } = useParams();
-  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed, addSection, renameSection } = useApp();
+  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, addSection, renameSection } = useApp();
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingToSection, setAddingToSection] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');

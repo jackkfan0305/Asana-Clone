@@ -3,8 +3,7 @@ import { useApp } from '../../../data/AppContext';
 
 export function WorkflowPage() {
   const { projectId } = useParams();
-  const { sections, tasks, projects, seed } = useApp();
-  const project = projects.find(p => p.id === (projectId || 'p1'));
+  const { sections, tasks } = useApp();
   const projectSections = sections.filter(s => s.projectId === (projectId || 'p1'));
 
   return (

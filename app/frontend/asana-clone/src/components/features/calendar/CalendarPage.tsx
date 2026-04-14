@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../../../data/AppContext';
 
 export function CalendarPage() {
-  const { tasks, setSelectedTaskId, projects, seed } = useApp();
+  const { tasks, setSelectedTaskId, projects } = useApp();
   const [currentDate, setCurrentDate] = useState(new Date('2026-04-01'));
 
   const year = currentDate.getFullYear();

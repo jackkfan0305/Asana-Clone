@@ -13,7 +13,6 @@ const ZOOM_LABELS: Record<ZoomLevel, string> = {
 type SortField = 'none' | 'start_date' | 'due_date' | 'assignee';
 
 function getQuarter(d: Date): number { return Math.floor(d.getMonth() / 3) + 1; }
-function getHalfYear(d: Date): number { return d.getMonth() < 6 ? 1 : 2; }
 
 function formatMonth(d: Date): string {
   return d.toLocaleString('en-US', { month: 'long' });

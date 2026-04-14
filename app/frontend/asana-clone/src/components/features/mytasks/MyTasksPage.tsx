@@ -422,7 +422,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 /* ─── Main Component ─── */
 export function MyTasksPage() {
-  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed } = useApp();
+  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects } = useApp();
   const [view, setView] = useState<ViewType>('list');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingTo, setAddingTo] = useState<string | null>(null);
@@ -1099,12 +1099,6 @@ export function MyTasksPage() {
             })}
           </div>
         </div>
-      )}
-
-      {view !== 'list' && view !== 'board' && view !== 'calendar' && (
-        <p style={{ color: 'var(--text-secondary)', padding: 32, textAlign: 'center', fontSize: 13 }}>
-          {view.charAt(0).toUpperCase() + view.slice(1)} view coming soon
-        </p>
       )}
 
       {/* Single ProjectPicker instance rendered at page level */}

@@ -1,5 +1,4 @@
-import { useParams } from 'react-router-dom';
-import { projects, users } from '../../../data/seed';
+import { users } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 
 const sampleMessages = [
@@ -9,9 +8,6 @@ const sampleMessages = [
 ];
 
 export function MessagesPage() {
-  const { projectId } = useParams();
-  const project = projects.find(p => p.id === projectId);
-
   return (
     <div>
       {/* Compose area */}
