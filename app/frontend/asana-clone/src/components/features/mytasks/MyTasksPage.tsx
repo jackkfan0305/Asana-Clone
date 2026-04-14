@@ -422,7 +422,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 /* ─── Main Component ─── */
 export function MyTasksPage() {
-  const { tasks, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed } = useApp();
+  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed } = useApp();
   const [view, setView] = useState<ViewType>('list');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingTo, setAddingTo] = useState<string | null>(null);
@@ -513,9 +513,16 @@ export function MyTasksPage() {
 
   const toggleCollapse = (s: string) => setCollapsed(prev => { const n = new Set(prev); n.has(s) ? n.delete(s) : n.add(s); return n; });
 
-  const handleAdd = (_section: string) => {
+  const handleAdd = (myTaskSection: string) => {
     if (!newTitle.trim()) return;
-    addTask({ title: newTitle.trim(), sectionId: 's1', projectId: 'p1', assigneeId: currentUserId });
+    const firstSection = sections[0];
+    addTask({
+      title: newTitle.trim(),
+      sectionId: firstSection?.id ?? 's1',
+      projectId: firstSection?.projectId ?? 'p1',
+      assigneeId: currentUserId,
+      myTaskSection,
+    });
     setNewTitle('');
     setAddingTo(null);
   };
@@ -636,11 +643,6 @@ export function MyTasksPage() {
             {v.charAt(0).toUpperCase() + v.slice(1)}
           </button>
         ))}
-        <button style={{ padding: '6px 8px 8px', color: 'var(--text-placeholder)', display: 'flex', alignItems: 'center', marginBottom: -1 }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--text-secondary)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}>
-          <Plus size={14} strokeWidth={2} />
-        </button>
       </div>
       {/* Full-width separator connecting to sidebar */}
       <div style={{ height: 1, background: '#404244', margin: '14px -24px 8px' }} />
@@ -982,14 +984,43 @@ export function MyTasksPage() {
                     );
                   })}
                 </div>
-                <button onClick={() => setAddingTo(section)} style={{
-                  display: 'flex', alignItems: 'center', gap: 4, padding: '8px',
-                  fontSize: 13, color: 'var(--text-placeholder)', width: '100%',
-                }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'var(--text-secondary)'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}>
-                  <Plus size={13} strokeWidth={2} />Add task
-                </button>
+                {addingTo === section ? (
+                  <div style={{
+                    padding: 10, background: 'var(--bg-content)', borderRadius: 'var(--radius-card)',
+                    border: '1px solid var(--border-default)', marginTop: 4,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                      <Checkbox checked={false} onChange={() => {}} />
+                      <input
+                        autoFocus
+                        value={newTitle}
+                        onChange={e => setNewTitle(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleAdd(section);
+                          if (e.key === 'Escape') { setAddingTo(null); setNewTitle(''); }
+                        }}
+                        onBlur={() => {
+                          if (newTitle.trim()) handleAdd(section);
+                          else { setAddingTo(null); setNewTitle(''); }
+                        }}
+                        placeholder="Write a task name"
+                        style={{
+                          flex: 1, background: 'transparent', border: 'none', padding: '2px 0',
+                          fontSize: 13, color: 'var(--text-primary)', outline: 'none',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => setAddingTo(section)} style={{
+                    display: 'flex', alignItems: 'center', gap: 4, padding: '8px',
+                    fontSize: 13, color: 'var(--text-placeholder)', width: '100%',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}>
+                    <Plus size={13} strokeWidth={2} />Add task
+                  </button>
+                )}
               </div>
             );
           })}

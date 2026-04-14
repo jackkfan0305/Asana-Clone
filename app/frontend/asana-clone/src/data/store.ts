@@ -334,5 +334,9 @@ export function useSectionStore() {
     return s;
   }, [sectionList]);
 
-  return { sections: sectionList, addSection };
+  const renameSection = useCallback((id: string, name: string) => {
+    setSections(prev => prev.map(s => s.id === id ? { ...s, name } : s));
+  }, []);
+
+  return { sections: sectionList, addSection, renameSection };
 }

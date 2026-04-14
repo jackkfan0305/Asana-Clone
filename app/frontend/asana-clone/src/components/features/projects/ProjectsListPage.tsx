@@ -4,6 +4,7 @@ import { useApp } from '../../../data/AppContext';
 import { AvatarGroup, Avatar } from '../../common/Avatar';
 
 type FilterDropdown = 'owner' | 'members' | 'portfolios' | 'status' | null;
+type SortOption = 'relevance' | 'due_date' | 'last_modified' | 'creation_time' | 'alpha_az' | 'alpha_za';
 
 function useClickOutside(ref: React.RefObject<HTMLDivElement | null>, onClose: () => void) {
   useEffect(() => {
@@ -17,9 +18,13 @@ function useClickOutside(ref: React.RefObject<HTMLDivElement | null>, onClose: (
 
 export function ProjectsListPage() {
   const navigate = useNavigate();
-  const { projects, seed } = useApp();
+  const { projects, tasks, seed } = useApp();
   const [search, setSearch] = useState('');
   const [openDropdown, setOpenDropdown] = useState<FilterDropdown>(null);
+  const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+  useClickOutside(sortRef, () => setShowSortDropdown(false));
 
   // Filter state
   const [filterOwnerIds, setFilterOwnerIds] = useState<Set<string>>(new Set());
@@ -86,6 +91,28 @@ export function ProjectsListPage() {
       return true;
     });
   }, [search, projects, filterOwnerIds, filterMemberIds, filterPortfolioIds, filterStatus, seed.teamMembers, seed.portfolios]);
+
+  const sorted = useMemo(() => {
+    if (sortBy === 'relevance') return filtered;
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'alpha_az': return a.name.localeCompare(b.name);
+        case 'alpha_za': return b.name.localeCompare(a.name);
+        case 'creation_time': return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'due_date': {
+          const aDue = tasks.filter(t => t.projectId === a.id && t.dueDate).map(t => new Date(t.dueDate!).getTime()).sort((x, y) => x - y)[0] ?? Infinity;
+          const bDue = tasks.filter(t => t.projectId === b.id && t.dueDate).map(t => new Date(t.dueDate!).getTime()).sort((x, y) => x - y)[0] ?? Infinity;
+          return aDue - bDue;
+        }
+        case 'last_modified': {
+          const aMax = tasks.filter(t => t.projectId === a.id && t.createdAt).map(t => new Date(t.createdAt).getTime()).sort((x, y) => y - x)[0] ?? new Date(a.createdAt).getTime();
+          const bMax = tasks.filter(t => t.projectId === b.id && t.createdAt).map(t => new Date(t.createdAt).getTime()).sort((x, y) => y - x)[0] ?? new Date(b.createdAt).getTime();
+          return bMax - aMax;
+        }
+        default: return 0;
+      }
+    });
+  }, [filtered, sortBy, tasks]);
 
   const hasActiveFilters = filterOwnerIds.size > 0 || filterMemberIds.size > 0 || filterPortfolioIds.size > 0 || filterStatus !== null;
 
@@ -417,16 +444,58 @@ export function ProjectsListPage() {
           <span>Name</span>
           <span>Members</span>
           <span>Portfolios</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M5 2v6M3 6l2 2 2-2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Last modified
-          </span>
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }} ref={sortRef}>
+            <button
+              onClick={() => setShowSortDropdown(v => !v)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none',
+                color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: 11, fontWeight: 500, padding: 0,
+              }}
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M5 2v6M3 6l2 2 2-2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {{ relevance: 'Relevance', due_date: 'Due date', last_modified: 'Last modified', creation_time: 'Creation time', alpha_az: 'A to Z', alpha_za: 'Z to A' }[sortBy]}
+            </button>
+            {showSortDropdown && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
+                background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+                padding: 6, minWidth: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              }}>
+                {([
+                  ['relevance', 'Relevance'],
+                  ['due_date', 'Due date'],
+                  ['last_modified', 'Last modified'],
+                  ['creation_time', 'Creation time'],
+                  ['alpha_az', 'Alphabetical: A to Z'],
+                  ['alpha_za', 'Alphabetical: Z to A'],
+                ] as [SortOption, string][]).map(([value, label]) => (
+                  <button
+                    key={value}
+                    onClick={() => { setSortBy(value); setShowSortDropdown(false); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+                      padding: '8px 10px', fontSize: 13, background: 'none', border: 'none',
+                      color: 'var(--text-primary)', cursor: 'pointer', borderRadius: 4,
+                      textAlign: 'left',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <span style={{ width: 16, textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 12 }}>
+                      {sortBy === value ? '✓' : ''}
+                    </span>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Rows */}
-        {filtered.map(project => {
+        {sorted.map(project => {
           const memberIds = getProjectMemberIds(project.id);
           const projectPortfolios = getProjectPortfolios(project.id);
 
@@ -486,7 +555,7 @@ export function ProjectsListPage() {
           );
         })}
 
-        {filtered.length === 0 && (
+        {sorted.length === 0 && (
           <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 13 }}>
             No projects found
           </div>

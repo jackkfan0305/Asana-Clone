@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../../data/AppContext';
-import { users, currentUserId, teamMembers } from '../../../data/seed';
+import { users, currentUserId, dependencies, teamMembers } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 import { AssigneeDropdown } from '../../common/AssigneeDropdown';
+import { StatusBadge } from '../../common/Badge';
 import { X, Calendar, Plus, Info, ChevronDown, ChevronLeft, ChevronRight, Check, UserPlus, Minus } from 'lucide-react';
 
 const myTaskSectionOptions = ['Recently assigned', 'Do today', 'Do next week', 'Do later'];
@@ -30,12 +31,17 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
   const [showInvitePopover, setShowInvitePopover] = useState(false);
   const [inviteSearch, setInviteSearch] = useState('');
   const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
-  const [assigneeSearch, setAssigneeSearch] = useState('');
   const [showAddProject, setShowAddProject] = useState(false);
   const [showProjectSectionDropdown, setShowProjectSectionDropdown] = useState(false);
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerMode, setDatePickerMode] = useState<'start' | 'due'>('start');
+  const [datePickerMonth, setDatePickerMonth] = useState(() => {
+    const d = new Date('2026-04-14');
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
+  const [hoveredDay, setHoveredDay] = useState<string | null>(null);
   const [projectExpanded, setProjectExpanded] = useState(true);
   const [hoveredProjectRow, setHoveredProjectRow] = useState(false);
   const sectionDropdownRef = useRef<HTMLDivElement>(null);
@@ -44,6 +50,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
   const projectSectionRef = useRef<HTMLDivElement>(null);
   const priorityRef = useRef<HTMLDivElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
+  const datePickerRef = useRef<HTMLDivElement>(null);
 
   const task = tasks.find(t => t.id === selectedTaskId);
 
@@ -67,6 +74,9 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
       }
       if (statusRef.current && !statusRef.current.contains(e.target as Node)) {
         setShowStatusDropdown(false);
+      }
+      if (datePickerRef.current && !datePickerRef.current.contains(e.target as Node)) {
+        setShowDatePicker(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -358,10 +368,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
             <span style={fieldLabelStyle}>Assignee</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative' }}>
               <button
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                  setShowAssigneeDropdown(prev => !prev);
-                }}
+                onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
                   background: 'transparent', cursor: 'pointer', padding: '2px 4px',
@@ -382,14 +389,11 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                 </button>
               )}
 
-              {/* Assignee dropdown */}
               {showAssigneeDropdown && (
                 <AssigneeDropdown
                   assigneeId={task.assigneeId}
                   teamId={teamId}
-                  onSelect={(userId) => {
-                    updateTask(task.id, { assigneeId: userId || undefined });
-                  }}
+                  onSelect={(userId) => updateTask(task.id, { assigneeId: userId || undefined })}
                   onClose={() => setShowAssigneeDropdown(false)}
                 />
               )}
@@ -444,12 +448,24 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
           {/* Due date */}
           <div style={fieldRowStyle}>
             <span style={fieldLabelStyle}>Due date</span>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }} ref={datePickerRef}>
               <button
-                onMouseDown={(e) => {
-                  // Prevent the DatePickerCalendar's click-away from firing first
-                  e.stopPropagation();
-                  setShowDatePicker(prev => !prev);
+                onClick={() => {
+                  const ref = task.dueDate || task.startDate;
+                  if (ref) {
+                    const d = new Date(ref);
+                    setDatePickerMonth({ year: d.getFullYear(), month: d.getMonth() });
+                  } else {
+                    setDatePickerMonth({ year: 2026, month: 3 });
+                  }
+                  // If both dates exist, start fresh in start mode; if start exists but no due, continue in due mode
+                  if (task.startDate && !task.dueDate) {
+                    setDatePickerMode('due');
+                  } else {
+                    setDatePickerMode('start');
+                  }
+                  setHoveredDay(null);
+                  setShowDatePicker(!showDatePicker);
                 }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
@@ -465,16 +481,225 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                 </span>
               </button>
 
-              {showDatePicker && (
-                <DatePickerCalendar
-                  dueDate={task.dueDate}
-                  startDate={task.startDate}
-                  onSelectDueDate={(date) => updateTask(task.id, { dueDate: date })}
-                  onSelectStartDate={(date) => updateTask(task.id, { startDate: date })}
-                  rangeMode
-                  onClose={() => setShowDatePicker(false)}
-                />
-              )}
+              {showDatePicker && (() => {
+                const daysInMonth = new Date(datePickerMonth.year, datePickerMonth.month + 1, 0).getDate();
+                const firstDay = new Date(datePickerMonth.year, datePickerMonth.month, 1).getDay();
+                const monthName = new Date(datePickerMonth.year, datePickerMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                const toDateStr = (day: number) =>
+                  `${datePickerMonth.year}-${String(datePickerMonth.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                const toDateStrFull = (year: number, month: number, day: number) =>
+                  `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                const formatInputDate = (d: string | null) => {
+                  if (!d) return '';
+                  const date = new Date(d + 'T00:00:00');
+                  return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${String(date.getFullYear()).slice(2)}`;
+                };
+
+                // Determine effective range (committed or hover preview)
+                const effectiveStart = task.startDate;
+                const effectiveDue = datePickerMode === 'due' && task.startDate && !task.dueDate && hoveredDay
+                  ? hoveredDay
+                  : task.dueDate;
+                const isPreview = datePickerMode === 'due' && task.startDate && !task.dueDate && hoveredDay;
+
+                const isInRange = (dateStr: string) => {
+                  if (!effectiveStart || !effectiveDue) return false;
+                  return dateStr >= effectiveStart && dateStr <= effectiveDue;
+                };
+
+                const isStart = (dateStr: string) => effectiveStart === dateStr;
+                const isDue = (dateStr: string) => effectiveDue === dateStr;
+
+                const prevMonth = () => setDatePickerMonth(v => v.month === 0 ? { year: v.year - 1, month: 11 } : { ...v, month: v.month - 1 });
+                const nextMonth = () => setDatePickerMonth(v => v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 });
+
+                // Previous month trailing days
+                const prevMonthDays = new Date(datePickerMonth.year, datePickerMonth.month, 0).getDate();
+                // Previous month year/month for date strings
+                const prevMYear = datePickerMonth.month === 0 ? datePickerMonth.year - 1 : datePickerMonth.year;
+                const prevMMonth = datePickerMonth.month === 0 ? 11 : datePickerMonth.month - 1;
+
+                // Helper for range pill styling
+                const getDayStyle = (dateStr: string, isOtherMonth: boolean): React.CSSProperties => {
+                  const inRange = isInRange(dateStr);
+                  const start = isStart(dateStr);
+                  const due = isDue(dateStr);
+                  const isEndpoint = start || due;
+                  const isSingleDay = start && due;
+
+                  let bg = 'transparent';
+                  let borderRadius = '0';
+
+                  if (isSingleDay) {
+                    bg = isPreview ? 'rgba(78,130,238,0.35)' : 'var(--color-primary)';
+                    borderRadius = '50%';
+                  } else if (isEndpoint) {
+                    bg = isPreview ? 'rgba(78,130,238,0.35)' : 'var(--color-primary)';
+                    borderRadius = start ? '50% 0 0 50%' : '0 50% 50% 0';
+                  } else if (inRange) {
+                    bg = isPreview ? 'rgba(78,130,238,0.15)' : 'rgba(78,130,238,0.2)';
+                  }
+
+                  return {
+                    textAlign: 'center' as const,
+                    padding: '6px 0',
+                    fontSize: 12,
+                    cursor: isOtherMonth ? 'default' : 'pointer',
+                    borderRadius,
+                    background: bg,
+                    color: isEndpoint && !isPreview ? '#fff' : isOtherMonth ? 'var(--text-placeholder)' : 'var(--text-primary)',
+                    fontWeight: isEndpoint ? 600 : 400,
+                    opacity: isOtherMonth && !inRange ? 0.4 : 1,
+                    transition: 'background 0.1s',
+                  };
+                };
+
+                return (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 200,
+                    width: 300, background: '#232527', border: '1px solid var(--border-divider)',
+                    borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                    padding: 0,
+                  }}>
+                    {/* Start / Due inputs */}
+                    <div style={{ display: 'flex', gap: 8, padding: '12px 12px 8px' }}>
+                      <div
+                        onClick={() => setDatePickerMode('start')}
+                        style={{
+                          flex: 1, display: 'flex', alignItems: 'center', gap: 6,
+                          padding: '6px 10px', borderRadius: 6,
+                          border: `1px solid ${datePickerMode === 'start' ? 'var(--text-primary)' : 'var(--border-input)'}`,
+                          cursor: 'pointer', background: '#1a1c1e',
+                        }}
+                      >
+                        <span style={{ fontSize: 12, color: task.startDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
+                          {formatInputDate(task.startDate) || 'Start date'}
+                        </span>
+                        {task.startDate && (
+                          <button onClick={e => { e.stopPropagation(); updateTask(task.id, { startDate: null }); setDatePickerMode('start'); }}
+                            style={{ color: 'var(--text-placeholder)', display: 'flex', padding: 0 }}>
+                            <X size={12} strokeWidth={2} />
+                          </button>
+                        )}
+                      </div>
+                      <div
+                        onClick={() => setDatePickerMode('due')}
+                        style={{
+                          flex: 1, display: 'flex', alignItems: 'center', gap: 6,
+                          padding: '6px 10px', borderRadius: 6,
+                          border: `1px solid ${datePickerMode === 'due' ? 'var(--text-primary)' : 'var(--border-input)'}`,
+                          cursor: 'pointer', background: '#1a1c1e',
+                        }}
+                      >
+                        <span style={{ fontSize: 12, color: task.dueDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
+                          {formatInputDate(task.dueDate) || 'Due date'}
+                        </span>
+                        {task.dueDate && (
+                          <button onClick={e => { e.stopPropagation(); updateTask(task.id, { dueDate: null }); }}
+                            style={{ color: 'var(--text-placeholder)', display: 'flex', padding: 0 }}>
+                            <X size={12} strokeWidth={2} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Month navigation */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px' }}>
+                      <button onClick={prevMonth} style={{ color: 'var(--text-secondary)', display: 'flex', padding: 4, cursor: 'pointer', borderRadius: 4 }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <ChevronLeft size={16} strokeWidth={2} />
+                      </button>
+                      <span style={{ fontSize: 13, fontWeight: 500 }}>{monthName}</span>
+                      <button onClick={nextMonth} style={{ color: 'var(--text-secondary)', display: 'flex', padding: 4, cursor: 'pointer', borderRadius: 4 }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <ChevronRight size={16} strokeWidth={2} />
+                      </button>
+                    </div>
+
+                    {/* Day headers */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', padding: '0 8px', marginBottom: 4 }}>
+                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                        <div key={i} style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-placeholder)', padding: '4px 0' }}>{d}</div>
+                      ))}
+                    </div>
+
+                    {/* Day grid */}
+                    <div
+                      style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', padding: '0 8px 8px' }}
+                      onMouseLeave={() => setHoveredDay(null)}
+                    >
+                      {/* Trailing days from previous month */}
+                      {Array.from({ length: firstDay }, (_, i) => {
+                        const day = prevMonthDays - firstDay + 1 + i;
+                        const dateStr = toDateStrFull(prevMYear, prevMMonth, day);
+                        return (
+                          <div key={`prev-${i}`} style={getDayStyle(dateStr, true)}>
+                            {day}
+                          </div>
+                        );
+                      })}
+                      {/* Current month days */}
+                      {Array.from({ length: daysInMonth }, (_, i) => {
+                        const day = i + 1;
+                        const dateStr = toDateStr(day);
+                        const style = getDayStyle(dateStr, false);
+                        return (
+                          <div
+                            key={day}
+                            onMouseEnter={() => setHoveredDay(dateStr)}
+                            onClick={() => {
+                              if (datePickerMode === 'start') {
+                                updateTask(task.id, { startDate: dateStr, dueDate: null });
+                                setDatePickerMode('due');
+                              } else {
+                                // Ensure due >= start; if not, swap
+                                if (task.startDate && dateStr < task.startDate) {
+                                  updateTask(task.id, { startDate: dateStr, dueDate: task.startDate });
+                                } else {
+                                  updateTask(task.id, { dueDate: dateStr });
+                                }
+                                setDatePickerMode('start');
+                              }
+                              setHoveredDay(null);
+                            }}
+                            style={style}
+                          >
+                            {day}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Footer with Clear */}
+                    <div style={{
+                      display: 'flex', justifyContent: 'flex-end',
+                      padding: '8px 12px', borderTop: '1px solid var(--border-divider)',
+                    }}>
+                      <button
+                        onClick={() => {
+                          updateTask(task.id, { startDate: null, dueDate: null });
+                          setDatePickerMode('start');
+                          setHoveredDay(null);
+                          setShowDatePicker(false);
+                        }}
+                        style={{
+                          fontSize: 13, color: 'var(--text-secondary)', cursor: 'pointer',
+                          padding: '4px 8px', borderRadius: 4, background: 'transparent',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

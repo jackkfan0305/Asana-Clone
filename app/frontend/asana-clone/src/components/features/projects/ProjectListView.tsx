@@ -140,10 +140,14 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 export function ProjectListView() {
   const { projectId } = useParams();
-  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed, addSection } = useApp();
+  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed, addSection, renameSection } = useApp();
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingToSection, setAddingToSection] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [addingSectionName, setAddingSectionName] = useState(false);
+  const [newSectionName, setNewSectionName] = useState('');
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [editingSectionName, setEditingSectionName] = useState('');
 
   // Drag state
   const [dragTaskId, setDragTaskId] = useState<string | null>(null);
@@ -163,12 +167,7 @@ export function ProjectListView() {
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div style={{ padding: 32, color: 'var(--text-secondary)' }}>Project not found</div>;
 
-  let projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
-  // Ensure at least one section exists
-  if (projectSections.length === 0) {
-    const s = addSection('Untitled section', project.id);
-    projectSections = [s];
-  }
+  const projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
   const projectTasks = tasks.filter(t => t.projectId === projectId && !t.parentTaskId);
 
   const now = new Date('2026-04-13');
@@ -402,9 +401,43 @@ export function ProjectListView() {
                 <span style={{ transform: collapsed.has(section.id) ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.15s', fontSize: 10 }}>&#9660;</span>
               </span>
               <span></span>
-              <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>
-                {section.name}
-              </span>
+              {editingSectionId === section.id ? (
+                <input
+                  autoFocus
+                  value={editingSectionName}
+                  onChange={e => setEditingSectionName(e.target.value)}
+                  onClick={e => e.stopPropagation()}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      const name = editingSectionName.trim() || section.name;
+                      renameSection(section.id, name);
+                      setEditingSectionId(null);
+                    }
+                    if (e.key === 'Escape') setEditingSectionId(null);
+                  }}
+                  onBlur={() => {
+                    const name = editingSectionName.trim() || section.name;
+                    renameSection(section.id, name);
+                    setEditingSectionId(null);
+                  }}
+                  style={{
+                    fontWeight: 600, fontSize: 14, color: 'var(--text-primary)',
+                    background: 'transparent', border: 'none', outline: 'none',
+                    padding: '0',
+                  }}
+                />
+              ) : (
+                <span
+                  onClick={e => {
+                    e.stopPropagation();
+                    setEditingSectionId(section.id);
+                    setEditingSectionName(section.name);
+                  }}
+                  style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', cursor: 'text' }}
+                >
+                  {section.name}
+                </span>
+              )}
               <span></span><span></span><span></span><span></span>
             </div>
 
@@ -515,6 +548,64 @@ export function ProjectListView() {
           </div>
         );
       })}
+
+      {/* Add section */}
+      {addingSectionName ? (
+        <div style={{
+          display: 'grid', gridTemplateColumns: gridCols,
+          gap: 8, padding: '6px 0', borderBottom: '1px solid var(--border-divider)', alignItems: 'center',
+          fontSize: 13,
+        }}>
+          <span />
+          <span />
+          <input
+            autoFocus
+            value={newSectionName}
+            onChange={e => setNewSectionName(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                const name = newSectionName.trim() || 'Untitled section';
+                addSection(name, project.id);
+                setNewSectionName('');
+                setAddingSectionName(false);
+              }
+              if (e.key === 'Escape') {
+                setNewSectionName('');
+                setAddingSectionName(false);
+              }
+            }}
+            onBlur={() => {
+              const name = newSectionName.trim();
+              if (name) {
+                addSection(name, project.id);
+              }
+              setNewSectionName('');
+              setAddingSectionName(false);
+            }}
+            placeholder="Section name"
+            style={{
+              fontWeight: 600, fontSize: 14, color: 'var(--text-primary)',
+              background: 'transparent', border: 'none', outline: 'none',
+              padding: '4px 0',
+            }}
+          />
+          <span /><span /><span /><span />
+        </div>
+      ) : (
+        <button
+          onClick={() => setAddingSectionName(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500,
+            padding: '10px 0', marginTop: 4,
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+        >
+          <Plus size={14} strokeWidth={2} />
+          Add section
+        </button>
+      )}
 
     </div>
   );

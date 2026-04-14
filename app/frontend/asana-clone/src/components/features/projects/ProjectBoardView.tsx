@@ -194,7 +194,7 @@ export function ProjectBoardView() {
   const { projectId } = useParams();
   const {
     tasks, sections, completeTask, addTask, moveTask, deleteTask,
-    setSelectedTaskId, addSection, projects, seed,
+    setSelectedTaskId, addSection, renameSection, projects, seed,
   } = useApp();
 
   // DnD state
@@ -215,6 +215,10 @@ export function ProjectBoardView() {
   const [addingSectionOpen, setAddingSectionOpen] = useState(false);
   const [newSectionName, setNewSectionName] = useState('');
 
+  // Rename section state
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [editingSectionName, setEditingSectionName] = useState('');
+
   // Toolbar state
   const [showFilter, setShowFilter] = useState(false);
   const [showSort, setShowSort] = useState(false);
@@ -231,12 +235,7 @@ export function ProjectBoardView() {
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div style={{ padding: 32, color: 'var(--text-secondary)' }}>Project not found</div>;
 
-  let projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
-  // Ensure at least one section exists
-  if (projectSections.length === 0) {
-    const s = addSection('Untitled section', project.id);
-    projectSections = [s];
-  }
+  const projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
   const projectTasks = tasks.filter(t => t.projectId === projectId && !t.parentTaskId);
   const now = new Date('2026-04-13');
 
@@ -480,7 +479,41 @@ export function ProjectBoardView() {
             >
               {/* Column header */}
               <div style={{ fontWeight: 600, fontSize: 14, padding: '8px 8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{section.name}</span>
+                {editingSectionId === section.id ? (
+                  <input
+                    autoFocus
+                    value={editingSectionName}
+                    onChange={e => setEditingSectionName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        const name = editingSectionName.trim() || section.name;
+                        renameSection(section.id, name);
+                        setEditingSectionId(null);
+                      }
+                      if (e.key === 'Escape') setEditingSectionId(null);
+                    }}
+                    onBlur={() => {
+                      const name = editingSectionName.trim() || section.name;
+                      renameSection(section.id, name);
+                      setEditingSectionId(null);
+                    }}
+                    style={{
+                      fontWeight: 600, fontSize: 14, color: 'var(--text-primary)',
+                      background: 'transparent', border: 'none', outline: 'none',
+                      padding: 0, width: '100%',
+                    }}
+                  />
+                ) : (
+                  <span
+                    onClick={() => {
+                      setEditingSectionId(section.id);
+                      setEditingSectionName(section.name);
+                    }}
+                    style={{ cursor: 'text' }}
+                  >
+                    {section.name}
+                  </span>
+                )}
                 <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>{sectionTasks.length}</span>
               </div>
 
