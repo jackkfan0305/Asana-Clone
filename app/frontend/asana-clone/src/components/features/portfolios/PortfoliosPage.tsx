@@ -11,14 +11,11 @@ export function PortfoliosPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <div style={{ marginBottom: 0 }}>
         <h1 style={{ font: 'var(--font-h1)' }}>Portfolios</h1>
-        <button style={{ background: 'var(--color-primary)', color: '#fff', padding: '8px 16px', borderRadius: 'var(--radius-btn)', fontSize: 13 }}>
-          Create portfolio
-        </button>
       </div>
 
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-divider)', marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
         <button onClick={() => setTab('recent')} style={{
           padding: '8px 16px', fontSize: 13,
           color: tab === 'recent' ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -30,6 +27,8 @@ export function PortfoliosPage() {
           borderBottom: tab === 'all' ? '2px solid var(--color-primary)' : '2px solid transparent',
         }}>Browse all</button>
       </div>
+      {/* Full-width separator connecting to sidebar */}
+      <div style={{ height: 1, background: '#404244', margin: '0.5px -24px 16px' }} />
 
       {portfolios.map(portfolio => {
         const owner = users.find(u => u.id === portfolio.ownerId);

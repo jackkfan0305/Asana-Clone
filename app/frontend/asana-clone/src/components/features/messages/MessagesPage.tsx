@@ -14,10 +14,6 @@ export function MessagesPage() {
 
   return (
     <div>
-      <h1 style={{ font: 'var(--font-h1)', marginBottom: 16 }}>
-        {project ? `${project.name} — Messages` : 'Messages'}
-      </h1>
-
       {/* Compose area */}
       <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', padding: 16, marginBottom: 24, border: '1px solid var(--border-default)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

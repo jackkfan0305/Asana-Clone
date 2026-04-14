@@ -67,6 +67,7 @@ export interface Task {
   createdAt: string;
   tagIds: string[];
   customFieldValues: Record<string, string>;
+  myTaskSection?: string;
 }
 
 export interface Comment {

@@ -6,9 +6,9 @@ import { StatusBadge } from '../../common/Badge';
 
 export function ProjectDashboard() {
   const { projectId } = useParams();
-  const { tasks, sections, seed } = useApp();
+  const { tasks, sections, projects, seed } = useApp();
 
-  const project = seed.projects.find(p => p.id === projectId);
+  const project = projects.find(p => p.id === projectId);
   if (!project) return <div>Project not found</div>;
 
   const projectTasks = tasks.filter(t => t.projectId === projectId && !t.parentTaskId);
@@ -36,11 +36,6 @@ export function ProjectDashboard() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-        <span style={{ fontSize: 20 }}>{project.icon}</span>
-        <h1 style={{ font: 'var(--font-h1)' }}>{project.name} — Dashboard</h1>
-      </div>
-
       {/* Stat cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {[
@@ -137,7 +132,6 @@ export function ProjectDashboard() {
         </div>
       )}
 
-      <button style={{ color: 'var(--text-link)', fontSize: 13, padding: '16px 0' }}>+ Add widget</button>
     </div>
   );
 }

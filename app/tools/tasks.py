@@ -46,6 +46,7 @@ def _task_dict(t: Task) -> dict:
         "created_by": t.created_by,
         "created_at": t.created_at.isoformat() if t.created_at else None,
         "updated_at": t.updated_at.isoformat() if t.updated_at else None,
+        "user_task_section_id": t.user_task_section_id,
     }
 
 
@@ -172,7 +173,7 @@ def update_task(db: Session, args: UpdateTaskArgs, current_user: User | None) ->
     old = _task_dict(task)
     uid = current_user.id if current_user else "system"
 
-    fields = ["title", "description", "assignee_id", "due_date", "start_date", "priority", "completed", "section_id", "project_id"]
+    fields = ["title", "description", "assignee_id", "due_date", "start_date", "priority", "completed", "section_id", "project_id", "user_task_section_id"]
     for field in fields:
         val = getattr(args, field, None)
         if val is not None:
@@ -303,6 +304,10 @@ def get_my_tasks(db: Session, args: GetMyTasksArgs, current_user: User | None) -
     elif args.group_by == "due_date":
         for t in tasks:
             key = t.due_date.isoformat() if t.due_date else "no_date"
+            grouped.setdefault(key, []).append(_task_dict(t))
+    elif args.group_by == "user_task_section":
+        for t in tasks:
+            key = t.user_task_section_id or "recently_assigned"
             grouped.setdefault(key, []).append(_task_dict(t))
     else:
         grouped["all"] = [_task_dict(t) for t in tasks]

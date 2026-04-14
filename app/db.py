@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/asana_clone"
+    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/asana_clone"
 )
 
 engine = create_engine(DATABASE_URL)

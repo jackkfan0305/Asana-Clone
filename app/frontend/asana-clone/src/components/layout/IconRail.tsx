@@ -5,7 +5,7 @@ import { currentUserId } from '../../data/seed';
 
 const items = [
   { id: 'work', Icon: CircleCheckBig, label: 'Work', path: '/home' },
-  { id: 'strategy', Icon: Triangle, label: 'Strategy', path: '/goals' },
+  { id: 'strategy', Icon: Triangle, label: 'Strategy', path: '/strategy' },
   { id: 'workflow', Icon: Workflow, label: 'Workflow', path: '/workflow' },
   { id: 'people', Icon: Users, label: 'People', path: '/teams' },
 ];
@@ -16,7 +16,7 @@ export function IconRail() {
 
   const getActive = () => {
     const path = location.pathname;
-    if (path.startsWith('/goals') || path.startsWith('/portfolios') || path.startsWith('/reporting') || path.startsWith('/workload')) return 'strategy';
+    if (path.startsWith('/strategy') || path.startsWith('/reporting') || path.startsWith('/workload')) return 'strategy';
     if (path.startsWith('/workflow') || path.startsWith('/templates') || path.startsWith('/forms') || path.startsWith('/custom-fields')) return 'workflow';
     if (path.startsWith('/teams')) return 'people';
     return 'work';
@@ -27,6 +27,7 @@ export function IconRail() {
   return (
     <div style={{
       width: 'var(--icon-rail-width)',
+      minWidth: 'var(--icon-rail-width)',
       background: 'var(--bg-icon-rail)',
       display: 'flex',
       flexDirection: 'column',
@@ -34,7 +35,6 @@ export function IconRail() {
       paddingTop: 12,
       gap: 2,
       flexShrink: 0,
-      borderRight: '1px solid var(--border-divider)',
     }}>
       {/* Nav icons */}
       {items.map(item => {

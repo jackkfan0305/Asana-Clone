@@ -3,7 +3,7 @@ import { useApp } from '../../data/AppContext';
 import { useAuth } from '../../api/authStore';
 import { logout } from '../../api/client';
 import { useNavigate } from 'react-router-dom';
-import { Search, HelpCircle, Settings, ChevronLeft, ChevronRight, Clock, Menu, Plus, LogOut, User } from 'lucide-react';
+import { Search, Settings, ChevronLeft, ChevronRight, Clock, Menu, Plus, LogOut, User } from 'lucide-react';
 
 // Asana three-dot logo mark
 function AsanaLogo() {
@@ -43,31 +43,44 @@ export function Topbar() {
       alignItems: 'center',
       padding: '0 12px',
       gap: 6,
-      borderBottom: '1px solid var(--border-divider)',
+      borderBottom: 'none',
       flexShrink: 0,
     }}>
       {/* Left: hamburger + Create */}
       {iconBtn(<Menu size={18} strokeWidth={1.8} />, 'Toggle sidebar', () => setSidebarExpanded(v => !v))}
 
       <button
-        onClick={() => navigate('/home')}
+        onClick={() => navigate('/create-project')}
         style={{
-          background: 'var(--color-create)',
+          background: '#404040',
           color: '#fff',
-          padding: '5px 14px',
-          borderRadius: 'var(--radius-pill)',
+          padding: '4px 16px 4px 4px',
+          borderRadius: 50,
           fontWeight: 500,
-          fontSize: 13,
+          fontSize: 16,
           display: 'flex',
           alignItems: 'center',
-          gap: 4,
+          gap: 10,
           lineHeight: 1,
           flexShrink: 0,
+          cursor: 'pointer',
+          letterSpacing: -0.2,
         }}
-        onMouseEnter={e => e.currentTarget.style.background = 'var(--color-create-hover)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'var(--color-create)'}
+        onMouseEnter={e => e.currentTarget.style.background = '#4a4a4a'}
+        onMouseLeave={e => e.currentTarget.style.background = '#404040'}
       >
-        <Plus size={14} strokeWidth={2.5} />
+        <span style={{
+          width: 28,
+          height: 28,
+          borderRadius: '50%',
+          background: '#e86a5a',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <Plus size={16} strokeWidth={2.5} color="#fff" />
+        </span>
         Create
       </button>
 
@@ -75,9 +88,9 @@ export function Topbar() {
 
       {/* Center: nav arrows, clock, search */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        {iconBtn(<ChevronLeft size={16} strokeWidth={2} />, 'Back')}
-        {iconBtn(<ChevronRight size={16} strokeWidth={2} />, 'Forward')}
-        {iconBtn(<Clock size={16} strokeWidth={1.8} />, 'History')}
+        {iconBtn(<ChevronLeft size={16} strokeWidth={2} />, 'Back', () => navigate(-1))}
+        {iconBtn(<ChevronRight size={16} strokeWidth={2} />, 'Forward', () => navigate(1))}
+        {iconBtn(<Clock size={16} strokeWidth={1.8} />, 'Recent activities')}
       </div>
 
       <div style={{ flex: 1, maxWidth: 480, position: 'relative' }}>
@@ -114,7 +127,6 @@ export function Topbar() {
             letterSpacing: -0.3,
           }}>asana</span>
         </div>
-        {iconBtn(<HelpCircle size={16} strokeWidth={1.5} />, 'Help')}
         {iconBtn(<Settings size={16} strokeWidth={1.5} />, 'Settings', () => navigate('/settings'))}
         <UserMenu />
       </div>

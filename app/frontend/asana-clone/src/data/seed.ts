@@ -90,6 +90,7 @@ const t = (overrides: Partial<Task> & Pick<Task, 'title' | 'sectionId' | 'projec
   createdAt: '2026-03-15',
   tagIds: [],
   customFieldValues: {},
+  myTaskSection: 'Recently assigned',
   ...overrides,
 });
 

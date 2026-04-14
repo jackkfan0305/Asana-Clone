@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Inbox, CircleCheck, FolderOpen, Briefcase, Target, LayoutGrid, Sparkles, ClipboardList, SlidersHorizontal, Zap, FileText, CircleDot, Package, ChevronRight, Plus } from 'lucide-react';
-import { projects, users, currentUserId } from '../../data/seed';
+import { Home, Inbox, CircleCheck, FolderOpen, Briefcase, Target, LayoutGrid, Sparkles, ClipboardList, SlidersHorizontal, Zap, FileText, CircleDot, Package, ChevronRight, ChevronDown, Plus, Gauge, GitFork, Users } from 'lucide-react';
+import { users, currentUserId } from '../../data/seed';
 import { useApp } from '../../data/AppContext';
 import { Avatar } from '../common/Avatar';
 import type { LucideIcon } from 'lucide-react';
@@ -9,11 +9,10 @@ import { useState } from 'react';
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { notifications, sidebarExpanded } = useApp();
+  const { notifications, projects } = useApp();
   const unread = notifications.filter(n => !n.read && !n.archived).length;
   const [projectsExpanded, setProjectsExpanded] = useState(true);
-
-  if (!sidebarExpanded) return null;
+  const [teamExpanded, setTeamExpanded] = useState(true);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
@@ -36,7 +35,7 @@ export function Sidebar() {
           textAlign: 'left',
           fontSize: 13,
           transition: 'background 0.1s',
-          height: 30,
+          height: 34,
         }}
         onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
         onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
@@ -55,7 +54,7 @@ export function Sidebar() {
 
   const getActivePanel = () => {
     const p = location.pathname;
-    if (p.startsWith('/goals') || p.startsWith('/portfolios') || p.startsWith('/reporting') || p.startsWith('/workload')) return 'strategy';
+    if (p.startsWith('/strategy') || p.startsWith('/reporting') || p.startsWith('/workload')) return 'strategy';
     if (p.startsWith('/workflow') || p.startsWith('/templates') || p.startsWith('/forms') || p.startsWith('/custom-fields')) return 'workflow';
     if (p.startsWith('/teams')) return 'people';
     return 'work';
@@ -65,7 +64,7 @@ export function Sidebar() {
 
   const sectionHeader = (label: string, showPlus?: boolean) => (
     <div style={{
-      padding: '10px 12px 4px 16px', marginLeft: 6,
+      padding: '14px 12px 6px 16px', marginLeft: 6,
       fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       letterSpacing: 0.5,
@@ -83,24 +82,28 @@ export function Sidebar() {
   );
 
   const divider = () => (
-    <div style={{ height: 1, background: 'var(--border-divider)', margin: '4px 18px' }} />
+    <div style={{ height: 1, background: '#626364', margin: '8px 0' }} />
   );
 
   return (
     <div style={{
       width: 'var(--sidebar-panel-width)',
+      minWidth: 'var(--sidebar-panel-width)',
+      height: '100%',
       background: 'var(--bg-sidebar)',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
       flexShrink: 0,
-      borderRight: '1px solid var(--border-divider)',
     }}>
       {/* Nav items */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '12px 0' }}>
         {/* Home and Inbox always visible */}
         {navItem('Home', '/home', Home)}
         {navItem('Inbox', '/inbox', Inbox, unread > 0 ? unread : undefined)}
+
+        {/* Full-width divider — aligns with page header borders */}
+        <div style={{ height: 1, background: '#626364', margin: '8px 0' }} />
 
         {panel === 'work' && (
           <>
@@ -112,7 +115,7 @@ export function Sidebar() {
             {navItem('Goals', '/goals', Target)}
             {divider()}
 
-            {/* Projects section with expand/collapse */}
+            {/* Collapsible Work section with projects & portfolios */}
             <div style={{
               padding: '10px 12px 4px 16px', marginLeft: 6,
               fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
@@ -121,13 +124,13 @@ export function Sidebar() {
             }}
               onClick={() => setProjectsExpanded(!projectsExpanded)}
             >
-              <ChevronRight size={11} strokeWidth={2} style={{
-                transform: projectsExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+              <ChevronDown size={11} strokeWidth={2} style={{
+                transform: projectsExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
                 transition: 'transform 0.15s',
               }} />
               <span style={{ flex: 1 }}>Work</span>
               <button
-                onClick={e => { e.stopPropagation(); }}
+                onClick={e => { e.stopPropagation(); navigate('/create-project'); }}
                 style={{ color: 'var(--text-placeholder)', padding: 0, display: 'flex' }}
                 onMouseEnter={e => e.currentTarget.style.color = 'var(--text-sidebar)'}
                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}
@@ -135,47 +138,46 @@ export function Sidebar() {
                 <Plus size={13} strokeWidth={2} />
               </button>
             </div>
-            {projectsExpanded && projects.filter(p => !p.archived).map(p => {
-              const active = isActive(`/project/${p.id}`);
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => navigate(`/project/${p.id}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '5px 12px 5px 28px',
-                    width: 'calc(100% - 12px)',
-                    marginLeft: 6,
-                    textAlign: 'left',
-                    fontSize: 13,
-                    color: active ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
-                    background: active ? 'var(--bg-sidebar-selected)' : 'transparent',
-                    borderRadius: 'var(--radius-btn)',
-                    height: 28,
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <span style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: p.color, flexShrink: 0,
-                  }} />
-                  <span className="truncate">{p.name}</span>
-                </button>
-              );
-            })}
+            {projectsExpanded && (
+              <>
+                {/* Projects */}
+                {projects.filter(p => !p.archived).map(p => {
+                  const active = isActive(`/project/${p.id}`);
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => navigate(`/project/${p.id}`)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '5px 12px 5px 28px',
+                        width: 'calc(100% - 12px)', marginLeft: 6,
+                        textAlign: 'left', fontSize: 13,
+                        color: active ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
+                        background: active ? 'var(--bg-sidebar-selected)' : 'transparent',
+                        borderRadius: 'var(--radius-btn)', height: 28,
+                      }}
+                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
+                      onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <span style={{
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: p.color, flexShrink: 0,
+                      }} />
+                      <span className="truncate">{p.name}</span>
+                    </button>
+                  );
+                })}
+              </>
+            )}
           </>
         )}
 
         {panel === 'strategy' && (
           <>
             {sectionHeader('Strategy')}
-            {navItem('Goals', '/goals', Target)}
-            {navItem('Portfolios', '/portfolios', Briefcase)}
-            {navItem('Reporting', '/reporting')}
-            {navItem('Workload', '/workload')}
+            {navItem('Goals', '/strategy/goals', Target)}
+            {navItem('Resourcing', '/strategy/resourcing', Gauge)}
+            {navItem('Reporting', '/strategy/reporting', GitFork)}
           </>
         )}
 
@@ -183,6 +185,7 @@ export function Sidebar() {
           <>
             {sectionHeader('Workflow')}
             {navItem('Template gallery', '/templates', LayoutGrid)}
+            {divider()}
             {navItem('AI Teammates', '/workflow', Sparkles)}
             {navItem('Project templates', '/templates', ClipboardList)}
             {navItem('Custom fields', '/custom-fields', SlidersHorizontal)}
@@ -196,48 +199,64 @@ export function Sidebar() {
         {panel === 'people' && (
           <>
             {sectionHeader('People')}
-            <div style={{ padding: '8px 12px 8px 22px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Avatar userId={currentUserId} size={28} />
-              <span style={{ color: 'var(--text-sidebar)', fontSize: 13 }}>
-                {users.find(u => u.id === currentUserId)?.name}
-              </span>
+            <button
+              onClick={() => navigate('/profile')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '5px 12px 5px 16px', marginLeft: 6,
+                width: 'calc(100% - 12px)', textAlign: 'left',
+                borderRadius: 'var(--radius-btn)', fontSize: 13,
+                color: 'var(--text-sidebar)', background: 'transparent',
+                height: 34,
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Avatar userId={currentUserId} size={24} />
+              <span>Profile</span>
+            </button>
+            {divider()}
+            {/* Team collapsible header */}
+            <div style={{
+              padding: '10px 12px 4px 16px', marginLeft: 6,
+              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+              display: 'flex', alignItems: 'center', gap: 4, letterSpacing: 0.5,
+              cursor: 'pointer',
+            }}
+              onClick={() => setTeamExpanded(!teamExpanded)}
+            >
+              <ChevronDown size={11} strokeWidth={2} style={{
+                transform: teamExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
+                transition: 'transform 0.15s',
+              }} />
+              <span>Team</span>
             </div>
-            {sectionHeader('Team')}
-            {navItem('My workspace', '/teams')}
+            {teamExpanded && (
+              <button
+                onClick={() => navigate('/teams')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '5px 12px 5px 16px', marginLeft: 6,
+                  width: 'calc(100% - 12px)', textAlign: 'left',
+                  borderRadius: 'var(--radius-btn)', fontSize: 13,
+                  color: isActive('/teams') ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
+                  background: isActive('/teams') ? 'var(--bg-sidebar-selected)' : 'transparent',
+                  height: 34, justifyContent: 'space-between',
+                }}
+                onMouseEnter={e => { if (!isActive('/teams')) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
+                onMouseLeave={e => { if (!isActive('/teams')) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Users size={15} strokeWidth={1.8} style={{ opacity: 0.8 }} />
+                  <span>My workspace</span>
+                </span>
+                <ChevronRight size={13} strokeWidth={1.8} style={{ opacity: 0.5 }} />
+              </button>
+            )}
           </>
         )}
       </div>
 
-      {/* Footer */}
-      <div style={{ padding: '8px 10px', borderTop: '1px solid var(--border-divider)' }}>
-        {/* Trial badge */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', marginBottom: 6,
-        }}>
-          <div style={{
-            width: 20, height: 20, borderRadius: '50%',
-            border: '2px solid var(--color-success)', flexShrink: 0,
-          }} />
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-sidebar)', fontWeight: 500, lineHeight: 1.2 }}>Advanced free trial</div>
-            <div style={{ fontSize: 10, color: 'var(--text-placeholder)', lineHeight: 1.2 }}>14 days left</div>
-          </div>
-        </div>
-        <button style={{
-          width: '100%', padding: '6px 10px', borderRadius: 'var(--radius-btn)',
-          border: '1px solid var(--border-default)', fontSize: 12, color: 'var(--text-sidebar)',
-          textAlign: 'center', marginBottom: 8,
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        >
-          Add billing info
-        </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '2px 6px' }}>
-          <Avatar userId={currentUserId} size={22} />
-          <button style={{ color: 'var(--text-link)', fontSize: 12 }}>Invite teammates</button>
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
-import { useTaskStore, useCommentStore, useNotificationStore, useTagStore, useSectionStore } from './store';
+import { useTaskStore, useCommentStore, useNotificationStore, useTagStore, useSectionStore, useProjectStore } from './store';
 import * as seed from './seed';
 
 type AppContextType = ReturnType<typeof useTaskStore> &
   ReturnType<typeof useCommentStore> &
   ReturnType<typeof useNotificationStore> &
   ReturnType<typeof useTagStore> &
-  ReturnType<typeof useSectionStore> & {
+  ReturnType<typeof useSectionStore> &
+  ReturnType<typeof useProjectStore> & {
     selectedTaskId: string | null;
     setSelectedTaskId: (id: string | null) => void;
     selectedTasks: string[];
@@ -28,6 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const notifStore = useNotificationStore();
   const tagStore = useTagStore();
   const sectionStore = useSectionStore();
+  const projectStore = useProjectStore();
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,6 +43,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...notifStore,
       ...tagStore,
       ...sectionStore,
+      ...projectStore,
       selectedTaskId, setSelectedTaskId,
       selectedTasks, setSelectedTasks,
       searchQuery, setSearchQuery,
