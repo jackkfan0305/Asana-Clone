@@ -36,6 +36,18 @@ async def lifespan(app: FastAPI):
     # Import all models so Base.metadata is populated
     import models  # noqa: F401
     Base.metadata.create_all(bind=engine)
+
+    # Migrate: add enabled_views column if it doesn't exist
+    with engine.connect() as conn:
+        inspector = sa_inspect(engine)
+        columns = [c["name"] for c in inspector.get_columns("projects")]
+        if "enabled_views" not in columns:
+            conn.execute(text(
+                "ALTER TABLE projects ADD COLUMN enabled_views TEXT[] "
+                "DEFAULT ARRAY['overview', 'list', 'board', 'timeline', 'dashboard']"
+            ))
+            conn.commit()
+
     yield
 
 

@@ -28,6 +28,7 @@ def _project_dict(p: Project) -> dict:
         "icon": p.icon,
         "status": p.status,
         "default_view": p.default_view,
+        "enabled_views": p.enabled_views,
         "archived": p.archived,
         "created_at": p.created_at.isoformat() if p.created_at else None,
         "updated_at": p.updated_at.isoformat() if p.updated_at else None,
@@ -69,6 +70,7 @@ def create_project(db: Session, args: CreateProjectArgs, current_user: User | No
         color=args.color,
         icon=args.icon,
         default_view=args.default_view or "list",
+        enabled_views=args.enabled_views or ["overview", "list", "board", "timeline", "dashboard"],
     )
     db.add(project)
     log_audit(db, "projects", pid, "INSERT", None, _project_dict(project), current_user.id if current_user else None)
@@ -92,7 +94,7 @@ def update_project(db: Session, args: UpdateProjectArgs, current_user: User | No
     if not p:
         return {"is_error": True, "text": f"Project not found: {args.project_id}", "structured_content": None}
     old = _project_dict(p)
-    for field in ["name", "description", "color", "icon", "status", "archived", "default_view"]:
+    for field in ["name", "description", "color", "icon", "status", "archived", "default_view", "enabled_views"]:
         val = getattr(args, field, None)
         if val is not None:
             setattr(p, field, val)

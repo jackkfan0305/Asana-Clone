@@ -37,12 +37,12 @@ export const teamMembers = [
 ];
 
 export const projects: Project[] = [
-  { id: 'p1', name: 'Website Redesign', teamId: 't1', color: '#4186e0', icon: '🌐', status: 'on_track', ownerId: 'u1', archived: false, createdAt: '2026-03-01', description: 'Complete redesign of the company website with modern UI/UX patterns.' },
-  { id: 'p2', name: 'Mobile App v2', teamId: 't1', color: '#7a6ff0', icon: '📱', status: 'at_risk', ownerId: 'u2', archived: false, createdAt: '2026-02-15', description: 'Second major version of our mobile application.' },
-  { id: 'p3', name: 'Brand Guidelines', teamId: 't2', color: '#aa62e3', icon: '🎨', status: 'on_track', ownerId: 'u4', archived: false, createdAt: '2026-03-10', description: 'Establish comprehensive brand guidelines for all marketing materials.' },
-  { id: 'p4', name: 'Q2 Marketing Campaign', teamId: 't3', color: '#fd612c', icon: '📣', status: 'off_track', ownerId: 'u7', archived: false, createdAt: '2026-03-20', description: 'Cross-channel marketing campaign for Q2 product launch.' },
-  { id: 'p5', name: 'API Platform', teamId: 't1', color: '#37c5ab', icon: '⚡', status: 'on_track', ownerId: 'u3', archived: false, createdAt: '2026-01-10', description: 'Public API platform for third-party integrations.' },
-  { id: 'p6', name: 'Design System', teamId: 't2', color: '#e362e3', icon: '🧩', status: 'on_track', ownerId: 'u6', archived: false, createdAt: '2026-02-01', description: 'Shared design system and component library.' },
+  { id: 'p1', name: 'Website Redesign', teamId: 't1', color: '#4186e0', icon: '🌐', status: 'on_track', ownerId: 'u1', archived: false, createdAt: '2026-03-01', description: 'Complete redesign of the company website with modern UI/UX patterns.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
+  { id: 'p2', name: 'Mobile App v2', teamId: 't1', color: '#7a6ff0', icon: '📱', status: 'at_risk', ownerId: 'u2', archived: false, createdAt: '2026-02-15', description: 'Second major version of our mobile application.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
+  { id: 'p3', name: 'Brand Guidelines', teamId: 't2', color: '#aa62e3', icon: '🎨', status: 'on_track', ownerId: 'u4', archived: false, createdAt: '2026-03-10', description: 'Establish comprehensive brand guidelines for all marketing materials.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
+  { id: 'p4', name: 'Q2 Marketing Campaign', teamId: 't3', color: '#fd612c', icon: '📣', status: 'off_track', ownerId: 'u7', archived: false, createdAt: '2026-03-20', description: 'Cross-channel marketing campaign for Q2 product launch.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
+  { id: 'p5', name: 'API Platform', teamId: 't1', color: '#37c5ab', icon: '⚡', status: 'on_track', ownerId: 'u3', archived: false, createdAt: '2026-01-10', description: 'Public API platform for third-party integrations.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
+  { id: 'p6', name: 'Design System', teamId: 't2', color: '#e362e3', icon: '🧩', status: 'on_track', ownerId: 'u6', archived: false, createdAt: '2026-02-01', description: 'Shared design system and component library.', enabledViews: ['overview', 'list', 'board', 'timeline', 'dashboard'] },
 ];
 
 export const sections: Section[] = [

@@ -75,6 +75,7 @@ CREATE TABLE projects (
   icon TEXT,
   status TEXT CHECK (status IN ('on_track', 'at_risk', 'off_track', 'on_hold', 'complete')) DEFAULT 'on_track',
   default_view TEXT CHECK (default_view IN ('list', 'board', 'calendar', 'timeline', 'dashboard')) DEFAULT 'list',
+  enabled_views TEXT[] DEFAULT ARRAY['overview', 'list', 'board', 'timeline', 'dashboard'],
   archived BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

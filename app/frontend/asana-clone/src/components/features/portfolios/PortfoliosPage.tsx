@@ -11,7 +11,7 @@ export function PortfoliosPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 0 }}>
+      <div style={{ marginBottom: 10.5 }}>
         <h1 style={{ font: 'var(--font-h1)' }}>Portfolios</h1>
       </div>
 

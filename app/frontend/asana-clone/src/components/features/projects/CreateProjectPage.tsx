@@ -51,7 +51,7 @@ export function CreateProjectPage() {
     if (!trimmed || creating) return;
     setCreating(true);
     try {
-      const p = await addProjectAsync(trimmed);
+      const p = await addProjectAsync(trimmed, Array.from(selectedViews));
       navigate(`/project/${p.id}`);
     } finally {
       setCreating(false);
