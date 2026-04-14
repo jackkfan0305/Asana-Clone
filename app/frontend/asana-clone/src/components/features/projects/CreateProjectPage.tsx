@@ -31,7 +31,7 @@ export function CreateProjectPage() {
   );
   const [hoveredView, setHoveredView] = useState<ViewType>('list');
   const navigate = useNavigate();
-  const { addProjectAsync } = useApp();
+  const { addProjectAsync, addSection } = useApp();
   const [creating, setCreating] = useState(false);
 
   const handleClose = () => navigate(-1);
@@ -51,7 +51,8 @@ export function CreateProjectPage() {
     if (!trimmed || creating) return;
     setCreating(true);
     try {
-      const p = await addProjectAsync(trimmed);
+      const p = await addProjectAsync(trimmed, Array.from(selectedViews));
+      addSection('Untitled section', p.id);
       navigate(`/project/${p.id}`);
     } finally {
       setCreating(false);

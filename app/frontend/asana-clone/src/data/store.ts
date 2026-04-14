@@ -24,8 +24,9 @@ export function useTaskStore() {
   useEffect(() => { saveToStorage('asana_tasks', tasks); }, [tasks]);
 
   const addTask = useCallback((task: Partial<Task> & Pick<Task, 'title' | 'sectionId' | 'projectId'>) => {
+    const tempId = `task${Date.now()}`;
     const newTask: Task = {
-      id: `task${Date.now()}`,
+      id: tempId,
       description: '',
       assigneeId: null,
       dueDate: null,
@@ -42,11 +43,45 @@ export function useTaskStore() {
       ...task,
     };
     setTasks(prev => [...prev, newTask]);
+
+    // Fire-and-forget — persist to backend
+    const apiArgs: Record<string, unknown> = {
+      title: newTask.title,
+      project_id: newTask.projectId,
+      section_id: newTask.sectionId,
+    };
+    if (newTask.assigneeId) apiArgs.assignee_id = newTask.assigneeId;
+    if (newTask.dueDate) apiArgs.due_date = newTask.dueDate;
+    if (newTask.startDate) apiArgs.start_date = newTask.startDate;
+    if (newTask.description) apiArgs.description = newTask.description;
+    callTool<Record<string, unknown>>('create_task', apiArgs)
+      .then(res => {
+        const data = unwrap(res);
+        if (data?.id) {
+          setTasks(prev => prev.map(t => t.id === tempId ? { ...t, id: data.id as string } : t));
+        }
+      })
+      .catch(() => { /* keep optimistic task */ });
+
     return newTask;
   }, [tasks.length]);
 
   const updateTask = useCallback((id: string, updates: Partial<Task>) => {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+
+    // Fire-and-forget — persist to backend
+    const apiUpdates: Record<string, unknown> = { task_id: id };
+    if (updates.title !== undefined) apiUpdates.title = updates.title;
+    if (updates.description !== undefined) apiUpdates.description = updates.description;
+    if (updates.assigneeId !== undefined) apiUpdates.assignee_id = updates.assigneeId || null;
+    if (updates.dueDate !== undefined) apiUpdates.due_date = updates.dueDate || null;
+    if (updates.startDate !== undefined) apiUpdates.start_date = updates.startDate || null;
+    if (updates.completed !== undefined) apiUpdates.completed = updates.completed;
+    if (updates.sectionId !== undefined) apiUpdates.section_id = updates.sectionId;
+    if (updates.projectId !== undefined) apiUpdates.project_id = updates.projectId;
+    if (Object.keys(apiUpdates).length > 1) {
+      callTool('update_task', apiUpdates).catch(() => {});
+    }
   }, []);
 
   const completeTask = useCallback((id: string) => {
@@ -156,11 +191,13 @@ export function useTagStore() {
   return { tags, addTag };
 }
 
+const DEFAULT_VIEWS = ['overview', 'list', 'board', 'timeline', 'dashboard'];
+
 function apiProjectToLocal(d: Record<string, unknown>): Project {
   return {
     id: d.id as string,
     name: d.name as string,
-    teamId: (d.team_id as string) || 't1',
+    teamId: (d.team_id as string) || 'team_001',
     color: (d.color as string) || '#4186e0',
     icon: (d.icon as string) || '',
     status: (d.status as Project['status']) || 'on_track',
@@ -168,6 +205,7 @@ function apiProjectToLocal(d: Record<string, unknown>): Project {
     archived: (d.archived as boolean) || false,
     createdAt: (d.created_at as string) || new Date().toISOString(),
     description: (d.description as string) || '',
+    enabledViews: (d.enabled_views as string[]) || DEFAULT_VIEWS,
   };
 }
 
@@ -190,14 +228,15 @@ export function useProjectStore() {
 
   useEffect(() => { saveToStorage('asana_projects', projectList); }, [projectList]);
 
-  const addProject = useCallback((name: string): Project => {
+  const addProject = useCallback((name: string, enabledViews?: string[]): Project => {
     const colors = ['#4186e0', '#7a6ff0', '#aa62e3', '#fd612c', '#37c5ab', '#e362e3', '#e8744f', '#f5d365'];
     const color = colors[Math.floor(Math.random() * colors.length)];
     const tempId = `p${Date.now()}`;
+    const views = enabledViews || DEFAULT_VIEWS;
     const p: Project = {
       id: tempId,
       name,
-      teamId: 't1',
+      teamId: 'team_001',
       color,
       icon: '',
       status: 'on_track',
@@ -205,16 +244,18 @@ export function useProjectStore() {
       archived: false,
       createdAt: new Date().toISOString(),
       description: '',
+      enabledViews: views,
     };
     setProjects(prev => [...prev, p]);
 
     // Fire-and-forget — replace temp id with real id when done
     callTool<Record<string, unknown>>('create_project', {
       name,
-      team_id: 't1',
+      team_id: 'team_001',
       color,
       icon: '',
       description: '',
+      enabled_views: views,
     }).then(res => {
       const data = unwrap(res);
       if (data?.id) {
@@ -226,16 +267,18 @@ export function useProjectStore() {
     return p;
   }, []);
 
-  const addProjectAsync = useCallback(async (name: string): Promise<Project> => {
+  const addProjectAsync = useCallback(async (name: string, enabledViews?: string[]): Promise<Project> => {
     const colors = ['#4186e0', '#7a6ff0', '#aa62e3', '#fd612c', '#37c5ab', '#e362e3', '#e8744f', '#f5d365'];
     const color = colors[Math.floor(Math.random() * colors.length)];
+    const views = enabledViews || DEFAULT_VIEWS;
     try {
       const res = await callTool<Record<string, unknown>>('create_project', {
         name,
-        team_id: 't1',
+        team_id: 'team_001',
         color,
         icon: '',
         description: '',
+        enabled_views: views,
       });
       const data = unwrap(res);
       const real = apiProjectToLocal(data);
@@ -245,9 +288,10 @@ export function useProjectStore() {
       // Fallback to local-only
       const tempId = `p${Date.now()}`;
       const p: Project = {
-        id: tempId, name, teamId: 't1', color, icon: '', status: 'on_track',
+        id: tempId, name, teamId: 'team_001', color, icon: '', status: 'on_track',
         ownerId: seed.currentUserId, archived: false,
         createdAt: new Date().toISOString(), description: '',
+        enabledViews: views,
       };
       setProjects(prev => [...prev, p]);
       return p;
@@ -269,6 +313,7 @@ export function useProjectStore() {
     if (updates.icon !== undefined) apiUpdates.icon = updates.icon;
     if (updates.status !== undefined) apiUpdates.status = updates.status;
     if (updates.archived !== undefined) apiUpdates.archived = updates.archived;
+    if (updates.enabledViews !== undefined) apiUpdates.enabled_views = updates.enabledViews;
     callTool('update_project', apiUpdates).catch(() => {});
   }, []);
 
@@ -289,5 +334,9 @@ export function useSectionStore() {
     return s;
   }, [sectionList]);
 
-  return { sections: sectionList, addSection };
+  const renameSection = useCallback((id: string, name: string) => {
+    setSections(prev => prev.map(s => s.id === id ? { ...s, name } : s));
+  }, []);
+
+  return { sections: sectionList, addSection, renameSection };
 }

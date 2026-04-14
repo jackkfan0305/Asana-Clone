@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../../data/AppContext';
 import { Checkbox } from '../../common/Checkbox';
 import { Avatar } from '../../common/Avatar';
+import { AssigneeDropdown } from '../../common/AssigneeDropdown';
+import { DatePickerCalendar } from '../../common/DatePickerCalendar';
 import { StatusBadge } from '../../common/Badge';
 import type { Task } from '../../../types';
 import {
@@ -192,7 +194,7 @@ export function ProjectBoardView() {
   const { projectId } = useParams();
   const {
     tasks, sections, completeTask, addTask, moveTask, deleteTask,
-    setSelectedTaskId, addSection, projects, seed,
+    setSelectedTaskId, addSection, renameSection, projects, seed,
   } = useApp();
 
   // DnD state
@@ -204,10 +206,18 @@ export function ProjectBoardView() {
   // Add task state
   const [addingTo, setAddingTo] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState('');
+  const [newAssigneeId, setNewAssigneeId] = useState<string | null>(null);
+  const [newDueDate, setNewDueDate] = useState<string | null>(null);
+  const [showNewAssigneeDropdown, setShowNewAssigneeDropdown] = useState(false);
+  const [showNewDatePicker, setShowNewDatePicker] = useState(false);
 
   // Add section state
   const [addingSectionOpen, setAddingSectionOpen] = useState(false);
   const [newSectionName, setNewSectionName] = useState('');
+
+  // Rename section state
+  const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [editingSectionName, setEditingSectionName] = useState('');
 
   // Toolbar state
   const [showFilter, setShowFilter] = useState(false);
@@ -225,12 +235,7 @@ export function ProjectBoardView() {
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div style={{ padding: 32, color: 'var(--text-secondary)' }}>Project not found</div>;
 
-  let projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
-  // Ensure at least one section exists
-  if (projectSections.length === 0) {
-    const s = addSection('Untitled section', project.id);
-    projectSections = [s];
-  }
+  const projectSections = sections.filter(s => s.projectId === projectId).sort((a, b) => a.position - b.position);
   const projectTasks = tasks.filter(t => t.projectId === projectId && !t.parentTaskId);
   const now = new Date('2026-04-13');
 
@@ -269,8 +274,16 @@ export function ProjectBoardView() {
 
   const handleAdd = (sectionId: string) => {
     if (!newTitle.trim()) return;
-    addTask({ title: newTitle.trim(), sectionId, projectId: project.id });
+    addTask({
+      title: newTitle.trim(),
+      sectionId,
+      projectId: project.id,
+      ...(newAssigneeId ? { assigneeId: newAssigneeId } : {}),
+      ...(newDueDate ? { dueDate: newDueDate } : {}),
+    });
     setNewTitle('');
+    setNewAssigneeId(null);
+    setNewDueDate(null);
     setAddingTo(null);
   };
 
@@ -466,7 +479,41 @@ export function ProjectBoardView() {
             >
               {/* Column header */}
               <div style={{ fontWeight: 600, fontSize: 14, padding: '8px 8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{section.name}</span>
+                {editingSectionId === section.id ? (
+                  <input
+                    autoFocus
+                    value={editingSectionName}
+                    onChange={e => setEditingSectionName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        const name = editingSectionName.trim() || section.name;
+                        renameSection(section.id, name);
+                        setEditingSectionId(null);
+                      }
+                      if (e.key === 'Escape') setEditingSectionId(null);
+                    }}
+                    onBlur={() => {
+                      const name = editingSectionName.trim() || section.name;
+                      renameSection(section.id, name);
+                      setEditingSectionId(null);
+                    }}
+                    style={{
+                      fontWeight: 600, fontSize: 14, color: 'var(--text-primary)',
+                      background: 'transparent', border: 'none', outline: 'none',
+                      padding: 0, width: '100%',
+                    }}
+                  />
+                ) : (
+                  <span
+                    onClick={() => {
+                      setEditingSectionId(section.id);
+                      setEditingSectionName(section.name);
+                    }}
+                    style={{ cursor: 'text' }}
+                  >
+                    {section.name}
+                  </span>
+                )}
                 <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>{sectionTasks.length}</span>
               </div>
 
@@ -598,7 +645,7 @@ export function ProjectBoardView() {
 
               {/* Add task input / button */}
               {addingTo === section.id ? (
-                <div style={{
+                <div data-add-task-card style={{
                   padding: 12, background: 'var(--bg-content)', borderRadius: 'var(--radius-card)',
                   border: '1px solid var(--border-default)', marginTop: 4,
                 }}>
@@ -608,8 +655,15 @@ export function ProjectBoardView() {
                       autoFocus
                       value={newTitle}
                       onChange={e => setNewTitle(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') handleAdd(section.id); if (e.key === 'Escape') { setAddingTo(null); setNewTitle(''); } }}
-                      onBlur={() => { if (newTitle.trim()) handleAdd(section.id); else { setAddingTo(null); setNewTitle(''); } }}
+                      onKeyDown={e => { if (e.key === 'Enter') handleAdd(section.id); if (e.key === 'Escape') { setAddingTo(null); setNewTitle(''); setNewAssigneeId(null); setNewDueDate(null); } }}
+                      onBlur={(e) => {
+                        // Don't close if focus is moving to a child element (calendar/assignee buttons)
+                        const container = e.currentTarget.closest('[data-add-task-card]');
+                        if (container && e.relatedTarget && container.contains(e.relatedTarget as Node)) return;
+                        if (showNewAssigneeDropdown || showNewDatePicker) return;
+                        if (newTitle.trim()) handleAdd(section.id);
+                        else { setAddingTo(null); setNewTitle(''); setNewAssigneeId(null); setNewDueDate(null); }
+                      }}
                       placeholder="Write a task name"
                       style={{
                         flex: 1, background: 'transparent', border: 'none', padding: '2px 0',
@@ -618,29 +672,68 @@ export function ProjectBoardView() {
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {/* Assignee placeholder */}
-                    <div style={{
-                      width: 24, height: 24, borderRadius: '50%',
-                      border: '1.5px dashed var(--border-input)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--text-placeholder)' }}>
-                        <circle cx="8" cy="5" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-                        <path d="M2 14c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" />
-                      </svg>
+                    {/* Assignee button */}
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowNewAssigneeDropdown(prev => !prev); setShowNewDatePicker(false); }}
+                        style={{
+                          width: 24, height: 24, borderRadius: '50%',
+                          border: newAssigneeId ? 'none' : '1.5px dashed var(--border-input)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', background: 'transparent', padding: 0,
+                          transition: 'border-color 0.15s',
+                        }}
+                        onMouseEnter={e => { if (!newAssigneeId) e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+                        onMouseLeave={e => { if (!newAssigneeId) e.currentTarget.style.borderColor = 'var(--border-input)'; }}
+                      >
+                        {newAssigneeId ? (
+                          <Avatar userId={newAssigneeId} size={24} />
+                        ) : (
+                          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--text-placeholder)' }}>
+                            <circle cx="8" cy="5" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+                            <path d="M2 14c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" />
+                          </svg>
+                        )}
+                      </button>
+                      {showNewAssigneeDropdown && (
+                        <AssigneeDropdown
+                          assigneeId={newAssigneeId}
+                          onSelect={(userId) => setNewAssigneeId(userId)}
+                          teamId={project.teamId}
+                          onClose={() => setShowNewAssigneeDropdown(false)}
+                        />
+                      )}
                     </div>
-                    {/* Due date placeholder */}
-                    <div style={{
-                      width: 24, height: 24, borderRadius: '50%',
-                      border: '1.5px dashed var(--border-input)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--text-placeholder)' }}>
-                        <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-                        <line x1="2" y1="7" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" />
-                        <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
+                    {/* Due date button */}
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowNewDatePicker(prev => !prev); setShowNewAssigneeDropdown(false); }}
+                        style={{
+                          width: 24, height: 24, borderRadius: '50%',
+                          border: newDueDate ? 'none' : '1.5px dashed var(--border-input)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', background: newDueDate ? 'var(--color-primary)' : 'transparent', padding: 0,
+                          transition: 'border-color 0.15s',
+                        }}
+                        onMouseEnter={e => { if (!newDueDate) e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+                        onMouseLeave={e => { if (!newDueDate) e.currentTarget.style.borderColor = 'var(--border-input)'; }}
+                        title={newDueDate ? new Date(newDueDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Set due date'}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ color: newDueDate ? '#fff' : 'var(--text-placeholder)' }}>
+                          <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                          <line x1="2" y1="7" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" />
+                          <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                      {showNewDatePicker && (
+                        <DatePickerCalendar
+                          dueDate={newDueDate}
+                          onSelectDueDate={(date) => setNewDueDate(date)}
+                          position="below-left"
+                          onClose={() => setShowNewDatePicker(false)}
+                        />
+                      )}
                     </div>
                     <div style={{ flex: 1 }} />
                     {/* Like icon */}

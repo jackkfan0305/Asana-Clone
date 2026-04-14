@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../../data/AppContext';
 import { users, currentUserId, dependencies, teamMembers } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
+import { AssigneeDropdown } from '../../common/AssigneeDropdown';
 import { StatusBadge } from '../../common/Badge';
 import { X, Calendar, Plus, Info, ChevronDown, ChevronLeft, ChevronRight, Check, UserPlus, Minus } from 'lucide-react';
 
@@ -29,6 +30,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
   const [showSectionDropdown, setShowSectionDropdown] = useState(false);
   const [showInvitePopover, setShowInvitePopover] = useState(false);
   const [inviteSearch, setInviteSearch] = useState('');
+  const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [showProjectSectionDropdown, setShowProjectSectionDropdown] = useState(false);
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
@@ -364,9 +366,20 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
           {/* Assignee */}
           <div style={fieldRowStyle}>
             <span style={fieldLabelStyle}>Assignee</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Avatar userId={task.assigneeId} size={22} />
-              <span style={{ fontSize: 13 }}>{assignee?.name || 'Unassigned'}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative' }}>
+              <button
+                onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  background: 'transparent', cursor: 'pointer', padding: '2px 4px',
+                  borderRadius: 4, transition: 'background 0.1s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <Avatar userId={task.assigneeId} size={22} />
+                <span style={{ fontSize: 13 }}>{assignee?.name || 'Unassigned'}</span>
+              </button>
               {assignee && (
                 <button
                   onClick={() => updateTask(task.id, { assigneeId: undefined })}
@@ -375,6 +388,16 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                   <X size={12} strokeWidth={2} />
                 </button>
               )}
+
+              {showAssigneeDropdown && (
+                <AssigneeDropdown
+                  assigneeId={task.assigneeId}
+                  teamId={teamId}
+                  onSelect={(userId) => updateTask(task.id, { assigneeId: userId || undefined })}
+                  onClose={() => setShowAssigneeDropdown(false)}
+                />
+              )}
+
               {/* My Task Section dropdown */}
               <div style={{ position: 'relative' }} ref={sectionDropdownRef}>
                 <button

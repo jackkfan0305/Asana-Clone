@@ -35,6 +35,7 @@ export interface Project {
   archived: boolean;
   createdAt: string;
   description: string;
+  enabledViews: string[];
 }
 
 export interface ProjectMember {

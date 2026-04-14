@@ -43,7 +43,7 @@ export function HomePage() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const now = new Date('2026-04-13');
+  const now = new Date();
   const upcoming = myTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) >= now);
   const overdue = myTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < now);
   const completed = myTasks.filter(t => t.completed);
@@ -54,6 +54,10 @@ export function HomePage() {
 
   // Format like real Asana: "Monday, April 13"
   const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  // Dynamic greeting based on time of day
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   const menuItemStyle: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: 10,
@@ -76,7 +80,7 @@ export function HomePage() {
         <div>
           <p style={{ color: 'var(--text-primary)', fontSize: 13, marginBottom: 2 }}>{dateStr}</p>
           <h1 style={{ fontSize: 28, fontWeight: 400, lineHeight: 1.2 }}>
-            Good afternoon, {user.name.split(' ')[0]}
+            {greeting}, {user.name.split(' ')[0]}
           </h1>
         </div>
 

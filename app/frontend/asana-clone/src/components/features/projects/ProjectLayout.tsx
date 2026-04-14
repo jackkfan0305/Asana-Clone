@@ -95,9 +95,13 @@ export function ProjectLayout() {
   const statusColor = project.status === 'on_track' ? 'var(--color-success)' : project.status === 'at_risk' ? 'var(--color-warning)' : 'var(--color-error)';
   const statusLabel = project.status === 'on_track' ? 'On track' : project.status === 'at_risk' ? 'At risk' : 'Off track';
 
+  // Filter tabs to only show enabled views for this project
+  const enabledViews = project.enabledViews || ['overview', 'list', 'board', 'timeline', 'dashboard'];
+  const filteredTabs = viewTabs.filter(vt => enabledViews.includes(vt.key));
+
   // Determine active tab from URL
   const pathSuffix = location.pathname.replace(`/project/${projectId}`, '').replace(/^\//, '');
-  const activeTab = viewTabs.find(vt => vt.path === pathSuffix)?.key || 'list';
+  const activeTab = filteredTabs.find(vt => vt.path === pathSuffix)?.key || 'list';
 
   const handleViewChange = (key: string) => {
     const tab = viewTabs.find(vt => vt.key === key);
@@ -148,7 +152,7 @@ export function ProjectLayout() {
 
       {/* View tabs — full-width border connects to sidebar divider */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #404244', marginBottom: 0, margin: '4.5px -24px 0', padding: '0 24px' }}>
-        {viewTabs.map(vt => (
+        {filteredTabs.map(vt => (
           <button key={vt.key} onClick={() => handleViewChange(vt.key)} style={{
             padding: '8px 12px', fontSize: 13,
             color: activeTab === vt.key ? 'var(--text-primary)' : 'var(--text-secondary)',

@@ -108,6 +108,7 @@ class CreateProjectArgs(BaseModel):
     icon: Optional[str] = None
     default_view: Optional[str] = None
     description: Optional[str] = None
+    enabled_views: Optional[list[str]] = None
 
 
 class GetProjectArgs(BaseModel):
@@ -123,6 +124,7 @@ class UpdateProjectArgs(BaseModel):
     status: Optional[str] = None
     archived: Optional[bool] = None
     default_view: Optional[str] = None
+    enabled_views: Optional[list[str]] = None
 
 
 class DeleteProjectArgs(BaseModel):
