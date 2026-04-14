@@ -3,16 +3,13 @@ import { useApp } from '../../../data/AppContext';
 
 export function WorkflowPage() {
   const { projectId } = useParams();
-  const { sections, tasks, seed } = useApp();
-  const project = seed.projects.find(p => p.id === (projectId || 'p1'));
+  const { sections, tasks, projects, seed } = useApp();
+  const project = projects.find(p => p.id === (projectId || 'p1'));
   const projectSections = sections.filter(s => s.projectId === (projectId || 'p1'));
 
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ font: 'var(--font-h1)', marginBottom: 8 }}>
-          {project ? `${project.name} — Workflow` : 'Workflow Builder'}
-        </h1>
         <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Start building your workflow in two minutes</p>
       </div>
 

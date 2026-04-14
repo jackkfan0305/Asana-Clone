@@ -6,10 +6,10 @@ import { Avatar } from '../../common/Avatar';
 // Badge available for future use
 import {
   ChevronDown, ChevronRight, ChevronLeft, Filter, ArrowUpDown,
-  Group, Search, Share2, Plus, X, Calendar as CalendarIcon,
+  Group, Search, Plus, X, Calendar as CalendarIcon, GripVertical,
 } from 'lucide-react';
 
-type ViewType = 'list' | 'board' | 'calendar' | 'dashboard' | 'files';
+type ViewType = 'list' | 'board' | 'calendar';
 type SortField = 'none' | 'start_date' | 'due_date' | 'created_on' | 'alphabetical' | 'project';
 type GroupField = 'sections' | 'none';
 
@@ -20,11 +20,12 @@ function DatePicker({ startDate, dueDate, onSave, onClose }: {
   startDate: string | null; dueDate: string | null;
   onSave: (start: string | null, due: string | null) => void; onClose: () => void;
 }) {
-  const [mode, setMode] = useState<'start' | 'due'>('start');
+  const [mode, setMode] = useState<'start' | 'due'>(startDate && !dueDate ? 'due' : 'start');
   const [start, setStart] = useState(startDate || '');
   const [due, setDue] = useState(dueDate || '');
+  const [hoveredDay, setHoveredDay] = useState<string | null>(null);
   const [viewMonth, setViewMonth] = useState(() => {
-    const d = dueDate ? new Date(dueDate) : new Date('2026-04-13');
+    const d = dueDate ? new Date(dueDate) : startDate ? new Date(startDate) : new Date('2026-04-13');
     return { year: d.getFullYear(), month: d.getMonth() };
   });
   const ref = useRef<HTMLDivElement>(null);
@@ -39,14 +40,26 @@ function DatePicker({ startDate, dueDate, onSave, onClose }: {
   const firstDay = new Date(viewMonth.year, viewMonth.month, 1).getDay();
   const today = new Date('2026-04-13');
 
+  const toDateStr = (day: number) =>
+    `${viewMonth.year}-${String(viewMonth.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
   const handleDayClick = (day: number) => {
-    const dateStr = `${viewMonth.year}-${String(viewMonth.month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dateStr = toDateStr(day);
     if (mode === 'start') {
       setStart(dateStr);
+      setDue('');
       setMode('due');
     } else {
-      setDue(dateStr);
-      onSave(start || null, dateStr);
+      // Ensure due >= start; if not, swap
+      if (start && dateStr < start) {
+        setDue(start);
+        onSave(dateStr, start);
+      } else {
+        setDue(dateStr);
+        onSave(start || null, dateStr);
+      }
+      setMode('start');
+      setHoveredDay(null);
     }
   };
 
@@ -55,20 +68,23 @@ function DatePicker({ startDate, dueDate, onSave, onClose }: {
 
   const monthName = new Date(viewMonth.year, viewMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-  const isInRange = (day: number) => {
-    if (!start || !due) return false;
-    const d = new Date(viewMonth.year, viewMonth.month, day);
-    return d >= new Date(start) && d <= new Date(due);
+  // Effective end for range (committed due or hover preview)
+  const effectiveDue = mode === 'due' && start && !due && hoveredDay ? hoveredDay : due;
+  const isPreview = mode === 'due' && start && !due && !!hoveredDay;
+
+  const isInRange = (dateStr: string) => {
+    if (!start || !effectiveDue) return false;
+    return dateStr >= start && dateStr <= effectiveDue;
   };
 
-  const isStart = (day: number) => start && new Date(viewMonth.year, viewMonth.month, day).toISOString().slice(0, 10) === start;
-  const isDue = (day: number) => due && new Date(viewMonth.year, viewMonth.month, day).toISOString().slice(0, 10) === due;
+  const isStartDate = (dateStr: string) => start === dateStr;
+  const isDueDate = (dateStr: string) => effectiveDue === dateStr;
   const isToday = (day: number) => new Date(viewMonth.year, viewMonth.month, day).toDateString() === today.toDateString();
 
   const fmt = (d: string) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' }) : '';
 
   return (
-    <div ref={ref} style={{
+    <div ref={ref} onClick={e => e.stopPropagation()} style={{
       position: 'absolute', top: '100%', left: 0, zIndex: 50, marginTop: 4,
       background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 260, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
@@ -82,7 +98,7 @@ function DatePicker({ startDate, dueDate, onSave, onClose }: {
         }}>
           <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 2 }}>Start date</div>
           {start ? fmt(start) : '—'}
-          {start && <X size={10} style={{ float: 'right', marginTop: 2, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setStart(''); }} />}
+          {start && <X size={10} style={{ float: 'right', marginTop: 2, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setStart(''); setMode('start'); }} />}
         </button>
         <button onClick={() => setMode('due')} style={{
           flex: 1, padding: '6px 8px', fontSize: 12, borderRadius: 4, textAlign: 'left',
@@ -112,25 +128,44 @@ function DatePicker({ startDate, dueDate, onSave, onClose }: {
       </div>
 
       {/* Days */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: 12 }}>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: 12 }}
+        onMouseLeave={() => setHoveredDay(null)}
+      >
         {Array.from({ length: firstDay }).map((_, i) => <span key={`e${i}`} />)}
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
-          const inRange = isInRange(day);
-          const isS = isStart(day);
-          const isD = isDue(day);
+          const dateStr = toDateStr(day);
+          const inRange = isInRange(dateStr);
+          const isS = isStartDate(dateStr);
+          const isD = isDueDate(dateStr);
           const isT = isToday(day);
+          const isEndpoint = isS || isD;
+          const isSingleDay = isS && isD;
+          let borderRadius = '50%';
+          if (isSingleDay) borderRadius = '50%';
+          else if (isS) borderRadius = '50% 0 0 50%';
+          else if (isD) borderRadius = '0 50% 50% 0';
+          else if (inRange) borderRadius = '0';
+
+          let bg = 'transparent';
+          if (isSingleDay) bg = isPreview ? 'rgba(78,114,202,0.35)' : '#4E72CA';
+          else if (isEndpoint) bg = isPreview ? 'rgba(78,114,202,0.35)' : '#4E72CA';
+          else if (inRange) bg = isPreview ? 'rgba(78,114,202,0.15)' : 'rgba(78,114,202,0.3)';
+
           return (
-            <button key={day} onClick={() => handleDayClick(day)} style={{
-              padding: '4px 0', borderRadius: (isS || isD) ? '50%' : inRange ? 0 : '50%',
-              background: (isS || isD) ? '#4E72CA' : inRange ? 'rgba(78,114,202,0.3)' : 'transparent',
-              color: (isS || isD) ? '#fff' : isT ? '#4E72CA' : 'var(--text-primary)',
-              fontWeight: isT ? 600 : 400,
-              border: isT && !isS && !isD ? '1px solid #4E72CA' : '1px solid transparent',
-              cursor: 'pointer', width: 30, height: 30, margin: '0 auto',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-              onMouseEnter={e => { if (!isS && !isD) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
-              onMouseLeave={e => { if (!isS && !isD) e.currentTarget.style.background = inRange ? 'rgba(78,114,202,0.3)' : 'transparent'; }}
+            <button key={day}
+              onClick={() => handleDayClick(day)}
+              onMouseEnter={() => setHoveredDay(dateStr)}
+              style={{
+                padding: '4px 0', borderRadius,
+                background: bg,
+                color: isEndpoint && !isPreview ? '#fff' : isT ? '#4E72CA' : 'var(--text-primary)',
+                fontWeight: isT || isEndpoint ? 600 : 400,
+                border: isT && !isEndpoint ? '1px solid #4E72CA' : '1px solid transparent',
+                cursor: 'pointer', width: 30, height: 30, margin: '0 auto',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.1s',
+              }}
             >
               {day}
             </button>
@@ -185,6 +220,73 @@ function CollaboratorPicker({ taskId, onClose }: { taskId: string; onClose: () =
           {user.id === task?.assigneeId && <span style={{ marginLeft: 'auto', color: 'var(--text-secondary)', fontSize: 11 }}>✓</span>}
         </button>
       ))}
+    </div>
+  );
+}
+
+/* ─── Project Picker (rendered once via portal-style fixed positioning) ─── */
+function ProjectPicker({ taskId, anchorRect, onClose }: {
+  taskId: string; anchorRect: { top: number; left: number; height: number }; onClose: () => void;
+}) {
+  const { updateTask, tasks, seed: { projects, sections } } = useApp();
+  const task = tasks.find(t => t.id === taskId);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) onClose(); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [onClose]);
+
+  const activeProjects = projects.filter(p => !p.archived);
+
+  const handleSelect = (projectId: string, sectionId: string) => {
+    if (task) updateTask(task.id, { projectId, sectionId });
+    onClose();
+  };
+
+  return (
+    <div ref={ref} onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()} style={{
+      position: 'fixed', top: anchorRect.top + anchorRect.height + 4, left: anchorRect.left, zIndex: 9999,
+      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      padding: 8, width: 240, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+    }}>
+      <div style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '4px 8px 6px', fontWeight: 500 }}>Select a project</div>
+      {activeProjects.map(project => {
+        const firstSection = sections.find(s => s.projectId === project.id);
+        return (
+          <button type="button" key={project.id} onClick={() => {
+            if (firstSection) handleSelect(project.id, firstSection.id);
+          }} style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px', width: '100%',
+            borderRadius: 4, fontSize: 13, color: 'var(--text-primary)', background: 'transparent',
+            border: 'none', cursor: 'pointer',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: project.color, flexShrink: 0 }} />
+            <span style={{ flex: 1, textAlign: 'left' }}>{project.name}</span>
+            {project.id === task?.projectId && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>✓</span>}
+          </button>
+        );
+      })}
+      {task?.projectId && (
+        <>
+          <div style={{ height: 1, background: 'var(--border-divider)', margin: '4px 0' }} />
+          <button type="button" onClick={() => handleSelect('', '')} style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px', width: '100%',
+            borderRadius: 4, fontSize: 13, color: 'var(--text-secondary)', background: 'transparent',
+            border: 'none', cursor: 'pointer',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <X size={12} />
+            <span>Remove from project</span>
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -320,7 +422,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 /* ─── Main Component ─── */
 export function MyTasksPage() {
-  const { tasks, completeTask, addTask, setSelectedTaskId, updateTask, seed } = useApp();
+  const { tasks, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, seed } = useApp();
   const [view, setView] = useState<ViewType>('list');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingTo, setAddingTo] = useState<string | null>(null);
@@ -339,6 +441,15 @@ export function MyTasksPage() {
   // Inline pickers
   const [datePickerTask, setDatePickerTask] = useState<string | null>(null);
   const [collabPickerTask, setCollabPickerTask] = useState<string | null>(null);
+  const [projectPickerTask, setProjectPickerTask] = useState<string | null>(null);
+  const [pickerAnchorRect, setPickerAnchorRect] = useState<{ top: number; left: number; height: number } | null>(null);
+
+  // Drag and drop
+  const [dragTaskId, setDragTaskId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const [dropSection, setDropSection] = useState<string | null>(null);
+
+  // Section overrides are now stored on the task itself via myTaskSection
 
   // Calendar view state
   const [calMonth, setCalMonth] = useState({ year: 2026, month: 3 }); // April 2026
@@ -346,15 +457,19 @@ export function MyTasksPage() {
   const myTasks = tasks.filter(t => t.assigneeId === currentUserId && !t.parentTaskId);
   const now = new Date('2026-04-13');
 
+  const getDefaultSection = (t: typeof myTasks[0]): string => {
+    if (t.completed) return '';
+    if (t.dueDate && new Date(t.dueDate) > new Date('2026-04-20')) return 'Do later';
+    if (t.dueDate && new Date(t.dueDate) > now && new Date(t.dueDate) <= new Date('2026-04-20')) return 'Do next week';
+    if (t.dueDate && new Date(t.dueDate).toDateString() === now.toDateString()) return 'Do today';
+    if (new Date(t.createdAt) > new Date('2026-04-07')) return 'Recently assigned';
+    return 'Recently assigned';
+  };
+
+  const getTaskSection = (t: typeof myTasks[0]): string => t.myTaskSection || getDefaultSection(t);
+
   const getSectionTasks = (section: string) => {
-    let result: typeof myTasks;
-    switch (section) {
-      case 'Recently assigned': result = myTasks.filter(t => !t.completed && new Date(t.createdAt) > new Date('2026-04-07')); break;
-      case 'Do today': result = myTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate).toDateString() === now.toDateString()); break;
-      case 'Do next week': result = myTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) > now && new Date(t.dueDate) <= new Date('2026-04-20')); break;
-      case 'Do later': result = myTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) > new Date('2026-04-20')); break;
-      default: result = [];
-    }
+    const result = myTasks.filter(t => !t.completed && getTaskSection(t) === section);
     return applyFiltersAndSort(result);
   };
 
@@ -456,10 +571,11 @@ export function MyTasksPage() {
       return (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '40px 1fr 100px 100px 160px 120px 28px',
+          gridTemplateColumns: '24px 40px 1fr 100px 100px 160px 120px 28px',
           alignItems: 'stretch',
           fontSize: 13,
         }}>
+          <div style={{ borderBottom: '1px solid var(--border-divider)' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-divider)' }}>
             <Checkbox checked={false} onChange={() => {}} />
           </div>
@@ -498,36 +614,19 @@ export function MyTasksPage() {
   };
 
   return (
-    <div style={{ background: '#1D1F21', margin: '-16px -24px', padding: '16px 24px', minHeight: 'calc(100vh - var(--topbar-height))' }}>
+    <div style={{ background: '#1D1F21', margin: '-16px -24px', padding: '8px 24px', minHeight: 'calc(100vh - var(--topbar-height))' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Avatar userId={currentUserId} size={32} />
           <h1 style={{ fontSize: 20, fontWeight: 400 }}>My tasks</h1>
           <ChevronDown size={14} strokeWidth={2} style={{ color: 'var(--text-secondary)', marginLeft: -4 }} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', fontSize: 12, color: 'var(--text-secondary)', borderRadius: 'var(--radius-btn)' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <Share2 size={12} strokeWidth={1.8} />Share
-          </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', fontSize: 12, color: 'var(--text-secondary)', borderRadius: 'var(--radius-btn)' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-              <rect x="0.5" y="0.5" width="5" height="5" rx="1" fill="#e8744f" />
-              <rect x="8" y="0.5" width="5" height="5" rx="1" fill="#f5d365" />
-              <rect x="0.5" y="8" width="5" height="5" rx="1" fill="#4ecbc4" />
-              <rect x="8" y="8" width="5" height="5" rx="1" fill="#7c6de6" />
-            </svg>Customize
-          </button>
-        </div>
       </div>
 
       {/* View tabs */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 0, borderBottom: '1px solid var(--border-divider)', marginBottom: 8 }}>
-        {(['list', 'board', 'calendar', 'dashboard', 'files'] as const).map(v => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 0 }}>
+        {(['list', 'board', 'calendar'] as const).map(v => (
           <button key={v} onClick={() => setView(v)} style={{
             padding: '6px 12px 8px', fontSize: 13,
             color: view === v ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -543,28 +642,19 @@ export function MyTasksPage() {
           <Plus size={14} strokeWidth={2} />
         </button>
       </div>
+      {/* Full-width separator connecting to sidebar */}
+      <div style={{ height: 1, background: '#404244', margin: '14px -24px 8px' }} />
 
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <div style={{ display: 'inline-flex', alignItems: 'stretch', borderRadius: 'var(--radius-pill)', background: '#4E72CA' }}>
-          <button onClick={() => setAddingTo('Recently assigned')} style={{
-            display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#fff',
-            padding: '6px 14px', fontSize: 12, fontWeight: 500, borderRadius: '999px 0 0 999px',
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.1)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <Plus size={12} strokeWidth={2.5} />Add task
-          </button>
-          <div style={{ width: 1, background: 'rgba(255,255,255,0.25)', margin: '4px 0' }} />
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#fff',
-            padding: '6px 10px', borderRadius: '0 999px 999px 0',
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.1)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <ChevronDown size={12} strokeWidth={2} />
-          </button>
-        </div>
+        <button onClick={() => setAddingTo('Recently assigned')} style={{
+          display: 'flex', alignItems: 'center', gap: 5, background: '#4E72CA', color: '#fff',
+          padding: '6px 14px', fontSize: 12, fontWeight: 500, borderRadius: 'var(--radius-pill)',
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = '#4265b8'}
+          onMouseLeave={e => e.currentTarget.style.background = '#4E72CA'}>
+          <Plus size={12} strokeWidth={2.5} />Add task
+        </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
           {/* Filter */}
           <div style={{ position: 'relative' }}>
@@ -633,10 +723,11 @@ export function MyTasksPage() {
         <>
           {/* Column headers */}
           <div style={{
-            display: 'grid', gridTemplateColumns: '40px 1fr 100px 100px 160px 120px 28px',
+            display: 'grid', gridTemplateColumns: '24px 40px 1fr 100px 100px 160px 120px 28px',
             alignItems: 'center', borderBottom: '1px solid var(--border-divider)',
             fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500,
           }}>
+            <span />
             <span />
             <span style={{ padding: '6px 8px', borderRight: '1px solid var(--border-divider)' }}>Name</span>
             <span style={{ padding: '6px 8px', borderRight: '1px solid var(--border-divider)' }}>Due date</span>
@@ -670,14 +761,56 @@ export function MyTasksPage() {
                 {!isCollapsed && (
                   <>
                     {sectionTasks.map(task => {
-                      const project = seed.projects.find(p => p.id === task.projectId);
+                      const project = projects.find(p => p.id === task.projectId);
                       const dateStr = formatDate(task);
                       const assignee = users.find(u => u.id === task.assigneeId);
+                      const isDragging = dragTaskId === task.id;
+                      const isDropTarget = dropTargetId === task.id && dragTaskId !== task.id;
                       return (
-                        <div key={task.id} style={{
-                          display: 'grid', gridTemplateColumns: '40px 1fr 100px 100px 160px 120px 28px',
-                          alignItems: 'stretch', fontSize: 13,
-                        }}>
+                        <div key={task.id}
+                          className="task-row"
+                          draggable={dragTaskId === task.id}
+                          onDragStart={e => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', task.id); }}
+                          onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setDropTargetId(task.id); }}
+                          onDragLeave={() => { setDropTargetId(prev => prev === task.id ? null : prev); }}
+                          onDrop={e => {
+                            e.preventDefault();
+                            const fromId = e.dataTransfer.getData('text/plain');
+                            if (fromId && fromId !== task.id) {
+                              // Move to this section if coming from a different one
+                              updateTask(fromId, { myTaskSection: section });
+                              const ids = sectionTasks.map(t => t.id);
+                              if (!ids.includes(fromId)) ids.push(fromId);
+                              const fromIdx = ids.indexOf(fromId);
+                              const toIdx = ids.indexOf(task.id);
+                              if (fromIdx !== -1 && toIdx !== -1) {
+                                ids.splice(fromIdx, 1);
+                                ids.splice(toIdx, 0, fromId);
+                                reorderTasks(ids);
+                              }
+                            }
+                            setDragTaskId(null);
+                            setDropTargetId(null);
+                          }}
+                          onDragEnd={() => { setDragTaskId(null); setDropTargetId(null); }}
+                          style={{
+                            display: 'grid', gridTemplateColumns: '24px 40px 1fr 100px 100px 160px 120px 28px',
+                            alignItems: 'stretch', fontSize: 13,
+                            opacity: isDragging ? 0.4 : 1,
+                            borderTop: isDropTarget ? '2px solid #4E72CA' : '2px solid transparent',
+                          }}>
+                          {/* Drag handle */}
+                          <div
+                            onMouseDown={() => setDragTaskId(task.id)}
+                            onMouseUp={() => { if (!isDragging) setDragTaskId(null); }}
+                            style={{
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              borderBottom: '1px solid var(--border-divider)', cursor: 'grab',
+                            }}
+                            className="drag-handle"
+                          >
+                            <GripVertical size={14} strokeWidth={1.5} style={{ color: 'var(--text-placeholder)', opacity: 0 }} />
+                          </div>
                           {/* Checkbox */}
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-divider)', cursor: 'pointer' }}
                             onClick={() => completeTask(task.id)} onMouseEnter={cellHover} onMouseLeave={cellLeave}>
@@ -717,18 +850,24 @@ export function MyTasksPage() {
                               <CollaboratorPicker taskId={task.id} onClose={() => setCollabPickerTask(null)} />
                             )}
                           </div>
-                          {/* Projects — clickable tag */}
-                          <div style={cellStyle({ display: 'flex', alignItems: 'center', gap: 4 })} onMouseEnter={cellHover} onMouseLeave={cellLeave}>
-                            {project && (
-                              <span onClick={() => {/* navigate to project */}} style={{
+                          {/* Projects — clickable to pick project */}
+                          <div style={cellStyle({ display: 'flex', alignItems: 'center', gap: 4 })}
+                            onClick={e => {
+                              if (projectPickerTask === task.id) { setProjectPickerTask(null); setPickerAnchorRect(null); }
+                              else { const rect = e.currentTarget.getBoundingClientRect(); setPickerAnchorRect({ top: rect.top, left: rect.left, height: rect.height }); setProjectPickerTask(task.id); }
+                            }}
+                            onMouseEnter={cellHover} onMouseLeave={cellLeave}>
+                            {project ? (
+                              <span style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 4,
                                 padding: '2px 6px', borderRadius: 4, fontSize: 11, cursor: 'pointer',
                                 background: `${project.color}22`, color: project.color, maxWidth: '100%',
                               }}>
                                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: project.color, flexShrink: 0 }} />
                                 <span className="truncate">{project.name}</span>
-                                <X size={10} strokeWidth={2} style={{ flexShrink: 0, opacity: 0.6 }} onClick={e => { e.stopPropagation(); }} />
                               </span>
+                            ) : (
+                              <Plus size={13} strokeWidth={1.5} style={{ color: 'var(--text-placeholder)', opacity: 0.5 }} />
                             )}
                           </div>
                           {/* Task visibility */}
@@ -764,23 +903,66 @@ export function MyTasksPage() {
         <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 16 }}>
           {myTaskSections.map(section => {
             const sectionTasks = getSectionTasks(section);
+            const isColumnDrop = dropSection === section && dragTaskId && getTaskSection(myTasks.find(t => t.id === dragTaskId)!) !== section;
             return (
-              <div key={section} style={{ minWidth: 260, flex: '1 1 0', background: 'var(--bg-card)', borderRadius: 'var(--radius-card)', padding: 8, display: 'flex', flexDirection: 'column' }}>
+              <div key={section}
+                onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setDropSection(section); }}
+                onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDropSection(prev => prev === section ? null : prev); }}
+                onDrop={e => {
+                  e.preventDefault();
+                  const fromId = e.dataTransfer.getData('text/plain');
+                  if (fromId) {
+                    updateTask(fromId, { myTaskSection: section });
+                    // If dropped on a specific card, reorder within the section
+                    if (dropTargetId && dropTargetId !== fromId) {
+                      const ids = sectionTasks.map(t => t.id);
+                      if (!ids.includes(fromId)) ids.push(fromId);
+                      const fromIdx = ids.indexOf(fromId);
+                      const toIdx = ids.indexOf(dropTargetId);
+                      if (fromIdx !== -1 && toIdx !== -1) {
+                        ids.splice(fromIdx, 1);
+                        ids.splice(toIdx, 0, fromId);
+                        reorderTasks(ids);
+                      }
+                    }
+                  }
+                  setDragTaskId(null);
+                  setDropTargetId(null);
+                  setDropSection(null);
+                }}
+                style={{
+                  minWidth: 260, flex: '1 1 0', borderRadius: 'var(--radius-card)', padding: 8,
+                  display: 'flex', flexDirection: 'column',
+                  background: isColumnDrop ? 'rgba(78,114,202,0.12)' : 'var(--bg-card)',
+                  border: isColumnDrop ? '2px dashed #4E72CA' : '2px solid transparent',
+                  transition: 'background 0.15s, border-color 0.15s',
+                }}>
                 <div style={{ fontWeight: 600, fontSize: 14, padding: '8px 8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   {section}
                   <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: 12 }}>{sectionTasks.length}</span>
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minHeight: 40 }}>
                   {sectionTasks.map(task => {
-                    const project = seed.projects.find(p => p.id === task.projectId);
+                    const project = projects.find(p => p.id === task.projectId);
                     const dateStr = formatDate(task);
+                    const isDragging = dragTaskId === task.id;
+                    const isCardDrop = dropTargetId === task.id && dragTaskId !== task.id;
                     return (
-                      <div key={task.id} onClick={() => setSelectedTaskId(task.id)} style={{
-                        padding: 10, background: '#1D1F21', borderRadius: 'var(--radius-card)',
-                        marginBottom: 6, cursor: 'pointer', border: '1px solid var(--border-default)',
-                      }}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--text-placeholder)'}
-                        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-default)'}>
+                      <div key={task.id}
+                        draggable
+                        onDragStart={e => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', task.id); setDragTaskId(task.id); }}
+                        onDragOver={e => { e.preventDefault(); e.stopPropagation(); setDropTargetId(task.id); setDropSection(section); }}
+                        onDragLeave={() => setDropTargetId(prev => prev === task.id ? null : prev)}
+                        onDragEnd={() => { setDragTaskId(null); setDropTargetId(null); setDropSection(null); }}
+                        onClick={() => setSelectedTaskId(task.id)}
+                        style={{
+                          padding: 10, background: '#1D1F21', borderRadius: 'var(--radius-card)',
+                          marginBottom: 6, cursor: 'grab', border: '1px solid var(--border-default)',
+                          opacity: isDragging ? 0.4 : 1,
+                          borderTop: isCardDrop ? '2px solid #4E72CA' : undefined,
+                        }}
+                        onMouseEnter={e => { if (!isDragging) e.currentTarget.style.borderColor = 'var(--text-placeholder)'; }}
+                        onMouseLeave={e => { if (!isDragging) e.currentTarget.style.borderColor = 'var(--border-default)'; }}>
                         <div style={{ display: 'flex', alignItems: 'start', gap: 8, marginBottom: 6 }}>
                           <Checkbox checked={task.completed} onChange={() => completeTask(task.id)} />
                           <span style={{ fontSize: 13, flex: 1 }}>{task.title}</span>
@@ -892,6 +1074,15 @@ export function MyTasksPage() {
         <p style={{ color: 'var(--text-secondary)', padding: 32, textAlign: 'center', fontSize: 13 }}>
           {view.charAt(0).toUpperCase() + view.slice(1)} view coming soon
         </p>
+      )}
+
+      {/* Single ProjectPicker instance rendered at page level */}
+      {projectPickerTask && pickerAnchorRect && (
+        <ProjectPicker
+          taskId={projectPickerTask}
+          anchorRect={pickerAnchorRect}
+          onClose={() => { setProjectPickerTask(null); setPickerAnchorRect(null); }}
+        />
       )}
     </div>
   );

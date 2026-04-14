@@ -68,6 +68,7 @@ class UpdateTaskArgs(BaseModel):
     completed: Optional[bool] = None
     section_id: Optional[str] = None
     project_id: Optional[str] = None
+    user_task_section_id: Optional[str] = None
 
 
 class DeleteTaskArgs(BaseModel):

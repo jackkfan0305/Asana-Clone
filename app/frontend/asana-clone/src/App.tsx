@@ -17,6 +17,8 @@ import { MyTasksPage } from './components/features/mytasks/MyTasksPage';
 import { ProjectsListPage } from './components/features/projects/ProjectsListPage';
 import { ProjectListView } from './components/features/projects/ProjectListView';
 import { ProjectBoardView } from './components/features/projects/ProjectBoardView';
+import { ProjectLayout } from './components/features/projects/ProjectLayout';
+import { CreateProjectPage } from './components/features/projects/CreateProjectPage';
 import { InboxPage } from './components/features/inbox/InboxPage';
 import { CalendarPage } from './components/features/calendar/CalendarPage';
 import { TeamsPage } from './components/features/teams/TeamsPage';
@@ -77,14 +79,15 @@ export default function App() {
                 <Route path="/my-tasks" element={<MyTasksPage />} />
                 <Route path="/inbox" element={<InboxPage />} />
                 <Route path="/projects" element={<ProjectsListPage />} />
-                <Route path="/project/:projectId" element={<ProjectListView />} />
-                <Route path="/project/:projectId/board" element={<ProjectBoardView />} />
-                <Route path="/project/:projectId/timeline" element={<TimelinePage />} />
-                <Route path="/project/:projectId/dashboard" element={<ProjectDashboard />} />
-                <Route path="/project/:projectId/calendar" element={<CalendarPage />} />
-                <Route path="/project/:projectId/overview" element={<ProjectOverview />} />
-                <Route path="/project/:projectId/workflow" element={<WorkflowPage />} />
-                <Route path="/project/:projectId/messages" element={<MessagesPage />} />
+                <Route path="/project/:projectId" element={<ProjectLayout />}>
+                  <Route index element={<ProjectListView />} />
+                  <Route path="board" element={<ProjectBoardView />} />
+                  <Route path="timeline" element={<TimelinePage />} />
+                  <Route path="dashboard" element={<ProjectDashboard />} />
+                  <Route path="calendar" element={<CalendarPage />} />
+                  <Route path="overview" element={<ProjectOverview />} />
+                  <Route path="workflow" element={<WorkflowPage />} />
+                </Route>
                 <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/teams" element={<TeamsPage />} />
                 <Route path="/tags" element={<TagsPage />} />
@@ -93,11 +96,16 @@ export default function App() {
                 <Route path="/portfolios" element={<PortfoliosPage />} />
                 <Route path="/workload" element={<WorkloadPage />} />
                 <Route path="/reporting" element={<ReportingPage />} />
+                <Route path="/strategy" element={<GoalsPage />} />
+                <Route path="/strategy/goals" element={<GoalsPage />} />
+                <Route path="/strategy/resourcing" element={<WorkloadPage />} />
+                <Route path="/strategy/reporting" element={<ReportingPage />} />
                 <Route path="/forms" element={<FormsPage />} />
                 <Route path="/templates" element={<TemplatesPage />} />
                 <Route path="/workflow" element={<WorkflowPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
+              <Route path="/create-project" element={<CreateProjectPage />} />
               <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
           </AppProvider>

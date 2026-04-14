@@ -57,3 +57,22 @@ input:focus, textarea:focus, select:focus {
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .text-secondary { color: var(--text-secondary); }
 .text-small { font: var(--font-small); }
+
+/* Drag handle: show on row hover */
+.task-row:hover .drag-handle svg { opacity: 1 !important; }
+div:hover > .drag-handle svg { opacity: 1 !important; }
+.drag-handle:hover svg { color: var(--text-secondary) !important; }
+
+/* Board card: show menu on hover */
+.board-card .card-menu-btn { opacity: 0; transition: opacity 0.1s; }
+.board-card:hover .card-menu-btn { opacity: 1; }
+
+/* Task detail pane slide animation */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}

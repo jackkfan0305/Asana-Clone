@@ -43,20 +43,12 @@ export function GoalsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <div style={{ marginBottom: 0 }}>
         <h1 style={{ font: 'var(--font-h1)' }}>Goals</h1>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button style={{ background: 'var(--color-primary)', color: '#fff', padding: '8px 16px', borderRadius: 'var(--radius-btn)', fontSize: 13 }}>
-            + Create goal
-          </button>
-          <button style={{ fontSize: 12, padding: '4px 8px', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-btn)', color: 'var(--text-secondary)' }}>Filters</button>
-          <button style={{ fontSize: 12, padding: '4px 8px', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-btn)', color: 'var(--text-secondary)' }}>Sort</button>
-          <button style={{ fontSize: 12, padding: '4px 8px', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-btn)', color: 'var(--text-secondary)' }}>Group</button>
-        </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-divider)', marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
         {([['strategy', 'Strategy map'], ['team', 'Team goals'], ['my', 'My goals']] as const).map(([key, label]) => (
           <button key={key} onClick={() => setTab(key as Tab)} style={{
             padding: '8px 16px', fontSize: 13,
@@ -67,6 +59,8 @@ export function GoalsPage() {
           </button>
         ))}
       </div>
+      {/* Full-width separator connecting to sidebar */}
+      <div style={{ height: 1, background: '#404244', margin: '0.5px -24px 16px' }} />
 
       {/* Column headers */}
       <div style={{

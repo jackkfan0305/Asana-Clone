@@ -1,4 +1,4 @@
-.PHONY: up down seed reset test dev-backend dev-frontend desktop-dev desktop validate lint
+.PHONY: up down seed reset test test-e2e dev-backend dev-frontend desktop-dev desktop validate lint
 
 up:
 	docker compose -f docker-compose.dev.yml up --build -d postgres app
@@ -15,6 +15,10 @@ reset:
 
 test:
 	pytest app/tests/ -v
+	cd app/frontend/asana-clone && npx playwright test
+
+test-e2e:
+	cd app/frontend/asana-clone && npx playwright test
 
 dev-backend:
 	cd app && uvicorn server:app --reload --host 0.0.0.0 --port 8000

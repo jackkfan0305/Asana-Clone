@@ -67,13 +67,13 @@
 - **DB tables**: `comments`, `activity_log`, `mentions`, `comment_likes`
 - **Rich features**: Rich text editor, @mention autocomplete, inline images, edit history, "liked by" display
 
-### 9. Subtasks & Task Dependencies
-- **Page type**: Nested list within task detail
-- **Description**: Tasks can have subtasks (which are full tasks themselves, infinitely nestable). Dependencies: "blocked by" and "blocking" relationships shown visually. Subtask progress shown as fraction (3/5).
-- **Key actions**: Add subtask, convert subtask to task, set dependency (blocking/blocked by), remove dependency, reorder subtasks
-- **Tools**: `add_subtask`, `remove_subtask`, `set_dependency`, `remove_dependency`, `get_subtask_tree`
-- **DB tables**: `tasks` (parent_task_id), `task_dependencies`
-- **Rich features**: Nested subtask tree, dependency chain visualization, circular dependency detection, subtask completion progress
+### 9. Create Project (Full-Screen Wizard)
+- **Page type**: Full-screen two-step creation wizard (covers sidebar + topbar)
+- **Description**: Two-step project creation flow accessible from every "create project" entry point (topbar Create button, sidebar + button, home page card, projects list page). **Step 1**: "New project" form with project name input (live-updates RHS preview graphic), project access dropdown (My workspace / Private), and Continue button. **Step 2**: "Choose views for your project" with 5 Asana-recommended view options (Overview, List [required], Board, Timeline, Dashboard) as selectable cards. Hovering each card swaps the RHS preview to a matching graphic (overview dashboard, list table, kanban board, Gantt timeline, charts dashboard). Back and Close buttons in top bar. "Create project" button persists to the database and navigates to the new project's list view with an empty-state placeholder (3 example task rows). New projects appear immediately in the sidebar under Work.
+- **Key actions**: Enter project name, choose access level, select/deselect views, create project, navigate back/close
+- **Tools**: `create_project`, `update_project`, `delete_project`, `get_project_list`
+- **DB tables**: `projects`, `project_members`
+- **Rich features**: Live project name in RHS preview, hover-to-switch preview graphics (5 distinct views), optimistic UI with async API persistence, access level dropdown with descriptions, empty-state placeholder rows for new projects
 
 ### 10. Custom Fields
 - **Page type**: Configuration UI + inline display in list/board

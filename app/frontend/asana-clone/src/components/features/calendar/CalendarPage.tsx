@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../../../data/AppContext';
 
 export function CalendarPage() {
-  const { tasks, setSelectedTaskId, seed } = useApp();
+  const { tasks, setSelectedTaskId, projects, seed } = useApp();
   const [currentDate, setCurrentDate] = useState(new Date('2026-04-01'));
 
   const year = currentDate.getFullYear();
@@ -26,7 +26,7 @@ export function CalendarPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 }}>
         <h1 style={{ font: 'var(--font-h1)' }}>Calendar</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <button onClick={prevMonth} style={{ padding: '4px 8px', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-btn)' }}>◀</button>
@@ -41,6 +41,8 @@ export function CalendarPage() {
           <button style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Project: All</button>
         </div>
       </div>
+      {/* Full-width separator connecting to sidebar */}
+      <div style={{ height: 1, background: '#404244', margin: '12px -24px 16px' }} />
 
       {/* Day headers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1, marginBottom: 1 }}>
@@ -67,7 +69,7 @@ export function CalendarPage() {
                 {day}
               </div>
               {dayTasks.slice(0, 3).map(task => {
-                const project = seed.projects.find(p => p.id === task.projectId);
+                const project = projects.find(p => p.id === task.projectId);
                 return (
                   <div
                     key={task.id}
