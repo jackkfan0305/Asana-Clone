@@ -355,6 +355,10 @@ class BulkArchiveNotificationsArgs(BaseModel):
     notification_ids: list[str]
 
 
+class BookmarkNotificationArgs(BaseModel):
+    notification_id: str
+
+
 class GetUnreadCountArgs(BaseModel):
     user_id: Optional[str] = None
 

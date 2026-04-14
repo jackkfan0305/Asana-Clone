@@ -77,6 +77,7 @@ def create_task(db: Session, args: CreateTaskArgs, current_user: User | None) ->
         created_by=current_user.id if current_user else None,
     )
     db.add(task)
+    db.flush()
 
     # Add tags
     if args.tags:
@@ -88,13 +89,14 @@ def create_task(db: Session, args: CreateTaskArgs, current_user: User | None) ->
         db.add(TaskFollower(task_id=task_id, user_id=current_user.id))
 
     # Activity log
-    db.add(ActivityLog(
-        id=f"act_{uuid.uuid4().hex[:8]}",
-        task_id=task_id,
-        project_id=args.project_id,
-        user_id=current_user.id if current_user else "system",
-        action="created",
-    ))
+    if current_user:
+        db.add(ActivityLog(
+            id=f"act_{uuid.uuid4().hex[:8]}",
+            task_id=task_id,
+            project_id=args.project_id,
+            user_id=current_user.id,
+            action="created",
+        ))
 
     # Notification for assignee
     if args.assignee_id and (not current_user or args.assignee_id != current_user.id):
@@ -171,7 +173,7 @@ def update_task(db: Session, args: UpdateTaskArgs, current_user: User | None) ->
         return {"is_error": True, "text": f"Task not found: {args.task_id}", "structured_content": None}
 
     old = _task_dict(task)
-    uid = current_user.id if current_user else "system"
+    uid = current_user.id if current_user else None
 
     fields = ["title", "description", "assignee_id", "due_date", "start_date", "priority", "completed", "section_id", "project_id", "user_task_section_id"]
     for field in fields:
@@ -179,7 +181,7 @@ def update_task(db: Session, args: UpdateTaskArgs, current_user: User | None) ->
         if val is not None:
             old_val = getattr(task, field)
             setattr(task, field, val)
-            if str(old_val) != str(val):
+            if str(old_val) != str(val) and uid:
                 db.add(ActivityLog(
                     id=f"act_{uuid.uuid4().hex[:8]}",
                     task_id=task.id,
@@ -246,7 +248,7 @@ def complete_task(db: Session, args: CompleteTaskArgs, current_user: User | None
     if not task:
         return {"is_error": True, "text": f"Task not found: {args.task_id}", "structured_content": None}
     old = _task_dict(task)
-    uid = current_user.id if current_user else "system"
+    uid = current_user.id if current_user else None
     task.completed = args.completed
     if args.completed:
         task.completed_at = datetime.now(timezone.utc)
@@ -255,13 +257,14 @@ def complete_task(db: Session, args: CompleteTaskArgs, current_user: User | None
         task.completed_at = None
         task.completed_by = None
 
-    db.add(ActivityLog(
-        id=f"act_{uuid.uuid4().hex[:8]}",
-        task_id=task.id,
-        project_id=task.project_id,
-        user_id=uid,
-        action="completed" if args.completed else "uncompleted",
-    ))
+    if uid:
+        db.add(ActivityLog(
+            id=f"act_{uuid.uuid4().hex[:8]}",
+            task_id=task.id,
+            project_id=task.project_id,
+            user_id=uid,
+            action="completed" if args.completed else "uncompleted",
+        ))
 
     # Notify followers
     for fl in (task.follower_links or []):

@@ -18,8 +18,61 @@ function saveToStorage<T>(key: string, value: T) {
   } catch { /* quota exceeded, ignore */ }
 }
 
+function apiTaskToLocal(d: Record<string, unknown>, projectId: string, sectionId: string): Task {
+  return {
+    id: d.id as string,
+    title: d.title as string,
+    description: (d.description as string) || '',
+    assigneeId: (d.assignee_id as string | null) || null,
+    dueDate: (d.due_date as string | null) || null,
+    startDate: (d.start_date as string | null) || null,
+    completed: (d.completed as boolean) || false,
+    completedAt: (d.completed_at as string | null) || null,
+    parentTaskId: (d.parent_task_id as string | null) || null,
+    sectionId: (d.section_id as string) || sectionId,
+    projectId: (d.project_id as string) || projectId,
+    position: (d.position as number) || 0,
+    createdBy: (d.created_by as string) || seed.currentUserId,
+    createdAt: (d.created_at as string) || new Date().toISOString(),
+    tagIds: (d.tags as { id: string }[] || []).map((t: { id: string }) => t.id),
+    customFieldValues: (d.custom_field_values as Record<string, string>) || {},
+    myTaskSection: (d.user_task_section_id as string) || 'Recently assigned',
+  };
+}
+
 export function useTaskStore() {
   const [tasks, setTasks] = useState<Task[]>(() => loadFromStorage('asana_tasks', seed.tasks));
+
+  // Load tasks from API on mount
+  useEffect(() => {
+    callTool<{ projects: Record<string, unknown>[]; total: number }>('get_project_list', { archived: false, limit: 100 })
+      .then(res => {
+        const data = unwrap(res);
+        if (!data?.projects?.length) return;
+        return Promise.all(
+          data.projects.map((p: Record<string, unknown>) =>
+            callTool<{ columns: { section_id: string; tasks: Record<string, unknown>[] }[] }>('get_board_view', { project_id: p.id })
+              .then(r => {
+                const board = unwrap(r);
+                if (!board?.columns) return [];
+                return board.columns.flatMap((col: { section_id: string; tasks: Record<string, unknown>[] }) =>
+                  col.tasks.map((t: Record<string, unknown>) => apiTaskToLocal(t, p.id as string, col.section_id))
+                );
+              })
+              .catch(() => [] as Task[])
+          )
+        );
+      })
+      .then(results => {
+        if (results) {
+          const allTasks = results.flat();
+          if (allTasks.length > 0) {
+            setTasks(allTasks);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => { saveToStorage('asana_tasks', tasks); }, [tasks]);
 
@@ -85,23 +138,49 @@ export function useTaskStore() {
   }, []);
 
   const completeTask = useCallback((id: string) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed, completedAt: t.completed ? null : new Date().toISOString() } : t));
+    let newCompleted = true;
+    setTasks(prev => prev.map(t => {
+      if (t.id !== id) return t;
+      newCompleted = !t.completed;
+      return { ...t, completed: newCompleted, completedAt: newCompleted ? new Date().toISOString() : null };
+    }));
+
+    // Fire-and-forget — persist to backend
+    callTool('complete_task', { task_id: id, completed: newCompleted }).catch(() => {});
   }, []);
 
   const deleteTask = useCallback((id: string) => {
     setTasks(prev => prev.filter(t => t.id !== id));
+
+    // Fire-and-forget — persist to backend
+    callTool('delete_task', { task_id: id }).catch(() => {});
   }, []);
 
   const bulkUpdate = useCallback((ids: string[], updates: Partial<Task>) => {
     setTasks(prev => prev.map(t => ids.includes(t.id) ? { ...t, ...updates } : t));
+
+    // Fire-and-forget — persist to backend
+    const apiUpdates: Record<string, unknown> = {};
+    if (updates.assigneeId !== undefined) apiUpdates.assignee_id = updates.assigneeId || null;
+    if (updates.dueDate !== undefined) apiUpdates.due_date = updates.dueDate || null;
+    if (updates.completed !== undefined) apiUpdates.completed = updates.completed;
+    if (Object.keys(apiUpdates).length > 0) {
+      callTool('bulk_update_tasks', { task_ids: ids, updates: apiUpdates }).catch(() => {});
+    }
   }, []);
 
   const bulkDelete = useCallback((ids: string[]) => {
     setTasks(prev => prev.filter(t => !ids.includes(t.id)));
+
+    // Fire-and-forget — persist to backend
+    callTool('bulk_delete_tasks', { task_ids: ids }).catch(() => {});
   }, []);
 
   const moveTask = useCallback((taskId: string, sectionId: string) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, sectionId } : t));
+
+    // Fire-and-forget — persist to backend
+    callTool('move_task_to_section', { task_id: taskId, section_id: sectionId }).catch(() => {});
   }, []);
 
   const reorderTasks = useCallback((orderedIds: string[]) => {
@@ -116,6 +195,9 @@ export function useTaskStore() {
       result.splice(Math.min(firstIdx, result.length), 0, ...reordered);
       return result;
     });
+
+    // Fire-and-forget — persist to backend
+    callTool('reorder_tasks', { task_ids: orderedIds }).catch(() => {});
   }, []);
 
   return { tasks, addTask, updateTask, completeTask, deleteTask, bulkUpdate, bulkDelete, moveTask, reorderTasks };
@@ -135,6 +217,17 @@ export function useCommentStore() {
       likes: [],
     };
     setComments(prev => [...prev, c]);
+
+    // Fire-and-forget — persist to backend
+    callTool<Record<string, unknown>>('add_comment', { task_id: taskId, body })
+      .then(res => {
+        const data = unwrap(res);
+        if (data?.id) {
+          setComments(prev => prev.map(cm => cm.id === c.id ? { ...cm, id: data.id as string } : cm));
+        }
+      })
+      .catch(() => {});
+
     return c;
   }, []);
 
@@ -144,10 +237,16 @@ export function useCommentStore() {
       const liked = c.likes.includes(seed.currentUserId);
       return { ...c, likes: liked ? c.likes.filter(u => u !== seed.currentUserId) : [...c.likes, seed.currentUserId] };
     }));
+
+    // Fire-and-forget — persist to backend
+    callTool('like_comment', { comment_id: commentId }).catch(() => {});
   }, []);
 
   const deleteComment = useCallback((commentId: string) => {
     setComments(prev => prev.filter(c => c.id !== commentId));
+
+    // Fire-and-forget — persist to backend
+    callTool('delete_comment', { comment_id: commentId }).catch(() => {});
   }, []);
 
   return { comments, addComment, likeComment, deleteComment };
@@ -158,22 +257,41 @@ export function useNotificationStore() {
 
   const markRead = useCallback((id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+
+    // Fire-and-forget — persist to backend
+    callTool('mark_notification_read', { notification_id: id, read: true }).catch(() => {});
   }, []);
 
   const archive = useCallback((id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: true } : n));
+
+    // Fire-and-forget — persist to backend
+    callTool('archive_notification', { notification_id: id }).catch(() => {});
   }, []);
 
   const bookmark = useCallback((id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, bookmarked: !n.bookmarked } : n));
+
+    // Fire-and-forget — persist to backend
+    callTool('bookmark_notification', { notification_id: id }).catch(() => {});
   }, []);
 
   const markUnread = useCallback((id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n));
+
+    // Fire-and-forget — persist to backend
+    callTool('mark_notification_read', { notification_id: id, read: false }).catch(() => {});
   }, []);
 
   const archiveAll = useCallback(() => {
-    setNotifications(prev => prev.map(n => ({ ...n, archived: true })));
+    setNotifications(prev => {
+      const ids = prev.filter(n => !n.archived).map(n => n.id);
+      if (ids.length > 0) {
+        // Fire-and-forget — persist to backend
+        callTool('bulk_archive_notifications', { notification_ids: ids }).catch(() => {});
+      }
+      return prev.map(n => ({ ...n, archived: true }));
+    });
   }, []);
 
   return { notifications, markRead, markUnread, archive, bookmark, archiveAll };
@@ -183,8 +301,20 @@ export function useTagStore() {
   const [tags, setTags] = useState<Tag[]>(seed.tags);
 
   const addTag = useCallback((name: string, color: string) => {
-    const tag: Tag = { id: `tag${Date.now()}`, name, color, organizationId: 'org1' };
+    const tempId = `tag${Date.now()}`;
+    const tag: Tag = { id: tempId, name, color, organizationId: 'org1' };
     setTags(prev => [...prev, tag]);
+
+    // Fire-and-forget — persist to backend and replace temp id
+    callTool<Record<string, unknown>>('create_tag', { name, color })
+      .then(res => {
+        const data = unwrap(res);
+        if (data?.id) {
+          setTags(prev => prev.map(t => t.id === tempId ? { ...t, id: data.id as string } : t));
+        }
+      })
+      .catch(() => {});
+
     return tag;
   }, []);
 
@@ -323,19 +453,69 @@ export function useProjectStore() {
 export function useSectionStore() {
   const [sectionList, setSections] = useState<Section[]>(seed.sections);
 
+  // Load sections from API on mount
+  useEffect(() => {
+    callTool<{ projects: Record<string, unknown>[]; total: number }>('get_project_list', { archived: false, limit: 100 })
+      .then(res => {
+        const data = unwrap(res);
+        if (!data?.projects?.length) return;
+        return Promise.all(
+          data.projects.map((p: Record<string, unknown>) =>
+            callTool<Record<string, unknown>>('get_project', { project_id: p.id })
+              .then(r => {
+                const proj = unwrap(r);
+                if (!proj?.sections) return [];
+                return (proj.sections as { id: string; name: string; position: number }[]).map(s => ({
+                  id: s.id,
+                  name: s.name,
+                  projectId: p.id as string,
+                  position: s.position,
+                }));
+              })
+              .catch(() => [] as Section[])
+          )
+        );
+      })
+      .then(results => {
+        if (results) {
+          const allSections = results.flat();
+          if (allSections.length > 0) {
+            setSections(allSections);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const addSection = useCallback((name: string, projectId: string) => {
+    const tempId = `s${Date.now()}`;
     const s: Section = {
-      id: `s${Date.now()}`,
+      id: tempId,
       name,
       projectId,
       position: sectionList.filter(s => s.projectId === projectId).length,
     };
     setSections(prev => [...prev, s]);
+
+    // Fire-and-forget — persist to backend and replace temp id
+    callTool<Record<string, unknown>>('create_section', {
+      name,
+      project_id: projectId,
+    }).then(res => {
+      const data = unwrap(res);
+      if (data?.id) {
+        setSections(prev => prev.map(sec => sec.id === tempId ? { ...sec, id: data.id as string } : sec));
+      }
+    }).catch(() => { /* keep optimistic section */ });
+
     return s;
   }, [sectionList]);
 
   const renameSection = useCallback((id: string, name: string) => {
     setSections(prev => prev.map(s => s.id === id ? { ...s, name } : s));
+
+    // Fire-and-forget — persist to backend
+    callTool('update_section', { section_id: id, name }).catch(() => {});
   }, []);
 
   return { sections: sectionList, addSection, renameSection };

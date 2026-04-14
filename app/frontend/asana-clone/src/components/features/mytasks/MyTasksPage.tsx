@@ -518,8 +518,8 @@ export function MyTasksPage() {
     const firstSection = sections[0];
     addTask({
       title: newTitle.trim(),
-      sectionId: firstSection?.id ?? 's1',
-      projectId: firstSection?.projectId ?? 'p1',
+      sectionId: firstSection?.id ?? 'sec_001',
+      projectId: firstSection?.projectId ?? 'prj_001',
       assigneeId: currentUserId,
       myTaskSection,
     });

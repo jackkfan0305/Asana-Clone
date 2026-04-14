@@ -1,4 +1,5 @@
 import { useApp } from '../../../data/AppContext';
+import { currentUserId } from '../../../data/seed';
 export function BulkToolbar() {
   const { selectedTasks, setSelectedTasks, bulkUpdate, bulkDelete } = useApp();
 
@@ -18,7 +19,7 @@ export function BulkToolbar() {
         style={{ fontSize: 12, padding: '4px 10px', borderRadius: 'var(--radius-btn)', background: 'var(--color-success)', color: '#fff' }}>
         ✓ Complete
       </button>
-      <button onClick={() => bulkUpdate(selectedTasks, { assigneeId: 'u1' })}
+      <button onClick={() => bulkUpdate(selectedTasks, { assigneeId: currentUserId })}
         style={{ fontSize: 12, padding: '4px 10px', borderRadius: 'var(--radius-btn)', border: '1px solid var(--border-default)' }}>
         Assign
       </button>
