@@ -257,6 +257,50 @@ export function Sidebar() {
         )}
       </div>
 
+      {/* Bottom section — trial info + invite */}
+      <div style={{
+        borderTop: '1px solid #626364', padding: '12px 16px',
+        flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%', border: '2px solid var(--color-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            background: 'transparent', position: 'relative',
+          }}>
+            <svg width={28} height={28} viewBox="0 0 28 28">
+              <circle cx={14} cy={14} r={12} fill="none" stroke="var(--border-default)" strokeWidth={2} />
+              <circle cx={14} cy={14} r={12} fill="none" stroke="var(--color-primary)" strokeWidth={2}
+                strokeDasharray={75.4} strokeDashoffset={18.85} transform="rotate(-90 14 14)" />
+            </svg>
+          </div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>Advanced free trial</div>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>12 days left</div>
+          </div>
+        </div>
+        <button style={{
+          width: '100%', padding: '6px 0', borderRadius: 6,
+          border: '1px solid var(--color-primary)', background: 'transparent',
+          color: 'var(--color-primary)', fontSize: 12, fontWeight: 500, cursor: 'pointer',
+          marginBottom: 10,
+        }}>
+          Add billing info
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Avatar userId={currentUserId} size={22} />
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6, fontSize: 12,
+            color: 'var(--text-secondary)', cursor: 'pointer', padding: 0,
+          }}>
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <rect x={2} y={4} width={20} height={16} rx={2} />
+              <path d="M22 7L13.03 12.7a1.94 1.94 0 01-2.06 0L2 7" />
+            </svg>
+            Invite teammates
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
