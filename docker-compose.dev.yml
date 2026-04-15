@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.app
     ports:
-      - "8030:8030"
+      - "8031:8030"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/asana_clone
       PORT: 8030
