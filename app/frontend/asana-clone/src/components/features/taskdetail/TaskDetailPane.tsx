@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../../data/AppContext';
-import { users, currentUserId, teamMembers } from '../../../data/seed';
+import { users, teamMembers } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 import { Avatar } from '../../common/Avatar';
 import { AssigneeDropdown } from '../../common/AssigneeDropdown';
 import { X, Calendar, Plus, Info, ChevronDown, ChevronLeft, ChevronRight, Check, UserPlus } from 'lucide-react';
@@ -23,6 +24,8 @@ const statusOptions = [
 
 export function TaskDetailPane({ closing }: { closing?: boolean }) {
   const { tasks, selectedTaskId, setSelectedTaskId, updateTask, completeTask, comments, addComment, likeComment, projects, sections } = useApp();
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
   const [commentText, setCommentText] = useState('');
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState('');

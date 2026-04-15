@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../../data/AppContext';
-import { currentUserId, users } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 import { Avatar } from '../../common/Avatar';
 import { Checkbox } from '../../common/Checkbox';
 import { Badge } from '../../common/Badge';
@@ -10,7 +10,8 @@ import { Lock, Check, Users as UsersIcon, MoreHorizontal, ChevronDown, Plus, Eye
 export function HomePage() {
   const { tasks, completeTask, setSelectedTaskId, projects } = useApp();
   const navigate = useNavigate();
-  const user = users.find(u => u.id === currentUserId)!;
+  const { user } = useAuth();
+  const currentUserId = user?.id ?? '';
   const myTasks = tasks.filter(t => t.assigneeId === currentUserId && !t.parentTaskId);
   const [tab, setTab] = useState<'upcoming' | 'overdue' | 'completed'>('upcoming');
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
@@ -80,7 +81,7 @@ export function HomePage() {
         <div>
           <p style={{ color: 'var(--text-primary)', fontSize: 13, marginBottom: 2 }}>{dateStr}</p>
           <h1 style={{ fontSize: 28, fontWeight: 400, lineHeight: 1.2 }}>
-            {greeting}, {user.name.split(' ')[0]}
+            {greeting}, {user?.name?.split(' ')[0] ?? 'there'}
           </h1>
         </div>
 
@@ -173,7 +174,7 @@ export function HomePage() {
           }}>
             {/* Widget header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <Avatar userId={currentUserId} size={28} />
+              <Avatar userId={currentUserId} size={28} name={user?.name} />
               <span style={{ fontWeight: 500, fontSize: 15 }}>My tasks</span>
               <Lock size={13} strokeWidth={1.8} style={{ color: 'var(--text-placeholder)' }} />
               <div style={{ flex: 1 }} />

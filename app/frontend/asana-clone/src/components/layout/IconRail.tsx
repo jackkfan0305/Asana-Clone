@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CircleCheckBig, Triangle, Workflow, Users, Settings, UserCircle, Plus, Link2, LogOut } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
-import { currentUserId, users } from '../../data/seed';
 import { useAuth } from '../../api/authStore';
 import { logout } from '../../api/client';
 
@@ -16,11 +15,9 @@ const items = [
 export function IconRail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user: currentUser, setUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  const currentUser = users.find(u => u.id === currentUserId)!;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -105,7 +102,7 @@ export function IconRail() {
           onClick={() => setMenuOpen(v => !v)}
           style={{ cursor: 'pointer', borderRadius: '50%', padding: 0, display: 'flex' }}
         >
-          <Avatar userId={currentUserId} size={28} />
+          <Avatar userId={currentUser?.id ?? null} size={28} name={currentUser?.name} />
         </button>
 
         {menuOpen && (
@@ -123,13 +120,13 @@ export function IconRail() {
           }}>
             {/* User info header */}
             <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Avatar userId={currentUserId} size={40} />
+              <Avatar userId={currentUser?.id ?? null} size={40} name={currentUser?.name} />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 500, color: '#f1f1f1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {currentUser.name}
+                  {currentUser?.name ?? 'User'}
                 </div>
                 <div style={{ fontSize: 12, color: '#a2a0a2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {currentUser.email}
+                  {currentUser?.email ?? ''}
                 </div>
               </div>
             </div>

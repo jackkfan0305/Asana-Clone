@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useApp } from '../../../data/AppContext';
-import { currentUserId, users, teamMembers } from '../../../data/seed';
+import { users, teamMembers } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 import { Checkbox } from '../../common/Checkbox';
 import { Avatar } from '../../common/Avatar';
 // Badge available for future use
@@ -423,6 +424,8 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 /* ─── Main Component ─── */
 export function MyTasksPage() {
   const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, deleteTask } = useApp();
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
   const [view, setView] = useState<ViewType>('list');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingTo, setAddingTo] = useState<string | null>(null);

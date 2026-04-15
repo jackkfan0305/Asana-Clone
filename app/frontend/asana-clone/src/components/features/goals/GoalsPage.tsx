@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { goals, teams, currentUserId } from '../../../data/seed';
+import { goals, teams } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 import { Avatar } from '../../common/Avatar';
 import { StatusBadge } from '../../common/Badge';
 import { ProgressBar } from '../../common/ProgressBar';
@@ -8,6 +9,8 @@ type Tab = 'team' | 'my' | 'strategy';
 
 export function GoalsPage() {
   const [tab, setTab] = useState<Tab>('team');
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
 
   const topLevel = goals.filter(g => !g.parentGoalId);
   const myGoals = goals.filter(g => g.ownerId === currentUserId);

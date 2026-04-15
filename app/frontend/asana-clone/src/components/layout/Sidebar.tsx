@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Inbox, CircleCheck, FolderOpen, Briefcase, Target, LayoutGrid, Sparkles, ClipboardList, SlidersHorizontal, Zap, FileText, CircleDot, Package, ChevronRight, ChevronDown, Plus, Gauge, GitFork, Users } from 'lucide-react';
-import { currentUserId } from '../../data/seed';
 import { useApp } from '../../data/AppContext';
+import { useAuth } from '../../api/authStore';
 import { Avatar } from '../common/Avatar';
 import type { LucideIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { notifications, projects } = useApp();
+  const { user: currentUser } = useAuth();
   const unread = notifications.filter(n => !n.read && !n.archived).length;
   const [projectsExpanded, setProjectsExpanded] = useState(true);
   const [teamExpanded, setTeamExpanded] = useState(true);
@@ -212,7 +213,7 @@ export function Sidebar() {
               onMouseEnter={e => e.currentTarget.style.background = '#3a3b3d'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <Avatar userId={currentUserId} size={24} />
+              <Avatar userId={currentUser?.id ?? null} size={24} name={currentUser?.name} />
               <span>Profile</span>
             </button>
             {divider()}
