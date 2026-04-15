@@ -18,6 +18,7 @@ from db import SessionLocal, engine, Base
 
 # Import all models so metadata is populated
 import models  # noqa: F401
+from auth import hash_password
 
 
 SEED_DIR = os.path.join(os.path.dirname(__file__), "..", "seed_data")
@@ -99,6 +100,10 @@ def seed_direct():
                 filtered = {k: v for k, v in record.items() if k in valid_cols}
                 if not filtered:
                     continue
+
+                # Hash passwords for users table
+                if table_name == "users" and "password_hash" in filtered:
+                    filtered["password_hash"] = hash_password(filtered["password_hash"])
 
                 try:
                     db.execute(table.insert().values(**filtered))
