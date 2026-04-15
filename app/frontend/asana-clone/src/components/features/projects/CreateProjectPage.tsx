@@ -424,13 +424,13 @@ function ViewPreviewContainer({ name, activeView }: { name: string; activeView: 
 
   return (
     <div style={{
-      width: '100%', maxWidth: 560, background: '#2a2b2d', borderRadius: 10,
-      border: '1px solid #3a3b3d', overflow: 'hidden',
+      width: '100%', maxWidth: 560, background: 'var(--bg-card)', borderRadius: 10,
+      border: '1px solid var(--border-default)', overflow: 'hidden',
     }}>
       {/* Header with name + tabs */}
       <div style={{ padding: '14px 16px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 6, background: '#444', flexShrink: 0 }} />
+          <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--bg-input)', flexShrink: 0 }} />
           <span style={{
             fontSize: 14, fontWeight: 500, color: 'var(--text-primary)',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
@@ -438,7 +438,7 @@ function ViewPreviewContainer({ name, activeView }: { name: string; activeView: 
             {name}
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 16, borderBottom: '1px solid #3a3b3d' }}>
+        <div style={{ display: 'flex', gap: 16, borderBottom: '1px solid var(--border-default)' }}>
           {tabs.map(t => (
             <span key={t} style={{
               fontSize: 12, paddingBottom: 8, color: activeView === t ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -467,14 +467,14 @@ function ViewPreviewContainer({ name, activeView }: { name: string; activeView: 
    Shared drawing helpers
    ================================================================ */
 
-const bar = (w: number, h: number = 8, color: string = '#555') => (
+const bar = (w: number, h: number = 8, color: string = 'var(--bg-input)') => (
   <div style={{ height: h, width: w, borderRadius: h / 2, background: color, flexShrink: 0 }} />
 );
 
 const avatar = (color: string = '#666', size: number = 22) => (
   <div style={{
     width: size, height: size, borderRadius: '50%', background: color,
-    border: '2px solid #3a3b3d', flexShrink: 0,
+    border: '2px solid var(--border-default)', flexShrink: 0,
   }} />
 );
 
@@ -485,7 +485,7 @@ const pill = (color: string, w: number = 48) => (
 const circle = (checked: boolean = false, color: string = '#5da283') => (
   <div style={{
     width: 16, height: 16, borderRadius: '50%',
-    border: checked ? 'none' : '1.5px solid #555',
+    border: checked ? 'none' : '1.5px solid var(--bg-input)',
     background: checked ? color : 'transparent', flexShrink: 0,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   }}>
@@ -499,10 +499,10 @@ const circle = (checked: boolean = false, color: string = '#5da283') => (
 
 const statusIcon = () => (
   <div style={{
-    width: 18, height: 18, borderRadius: 4, border: '1.5px solid #555',
+    width: 18, height: 18, borderRadius: 4, border: '1.5px solid var(--bg-input)',
     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   }}>
-    <div style={{ width: 8, height: 8, borderRadius: 2, background: '#555' }} />
+    <div style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--bg-input)' }} />
   </div>
 );
 
@@ -517,25 +517,25 @@ function OverviewPreview() {
       <div style={{ flex: 1.2, display: 'flex', flexDirection: 'column', gap: 14 }}>
         {/* Text block area */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {bar(200, 10, '#555')}
-          {bar(180, 8, '#444')}
-          {bar(160, 8, '#444')}
+          {bar(200, 10, 'var(--bg-input)')}
+          {bar(180, 8, 'var(--bg-input)')}
+          {bar(160, 8, 'var(--bg-input)')}
           <div style={{ height: 4 }} />
-          {bar(190, 8, '#444')}
-          {bar(140, 8, '#444')}
+          {bar(190, 8, 'var(--bg-input)')}
+          {bar(140, 8, 'var(--bg-input)')}
         </div>
 
         {/* Role cards — 2x2 grid */}
         <div style={{
-          border: '1px solid #3a3b3d', borderRadius: 8, padding: 12,
+          border: '1px solid var(--border-default)', borderRadius: 8, padding: 12,
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
         }}>
           {[0, 1, 2, 3].map(i => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {avatar('#666', 26)}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {bar(60, 7, '#555')}
-                {bar(44, 6, '#444')}
+                {bar(60, 7, 'var(--bg-input)')}
+                {bar(44, 6, 'var(--bg-input)')}
               </div>
             </div>
           ))}
@@ -547,7 +547,7 @@ function OverviewPreview() {
         }}>
           {[['#5da283', '#5da283'], ['#5da283', '#5da283']].map((colors, i) => (
             <div key={i} style={{
-              border: '1px solid #3a3b3d', borderRadius: 8, padding: 10,
+              border: '1px solid var(--border-default)', borderRadius: 8, padding: 10,
               display: 'flex', flexDirection: 'column', gap: 6,
             }}>
               {bar(80, 16, colors[0])}
@@ -572,16 +572,16 @@ function OverviewPreview() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 14 }}>
               <div style={{
                 width: 10, height: 10, borderRadius: '50%',
-                border: '2px solid #555', background: 'transparent', flexShrink: 0,
+                border: '2px solid var(--bg-input)', background: 'transparent', flexShrink: 0,
               }} />
-              {i < 4 && <div style={{ width: 1, flex: 1, background: '#3a3b3d', minHeight: 20 }} />}
+              {i < 4 && <div style={{ width: 1, flex: 1, background: 'var(--border-default)', minHeight: 20 }} />}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
               {item.pillColor && pill(item.pillColor, 50)}
-              {bar(90, 7, '#555')}
+              {bar(90, 7, 'var(--bg-input)')}
               <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                 {i === 2 && <>{avatar('#666', 16)}{avatar('#666', 16)}{avatar('#666', 16)}{avatar('#666', 16)}</>}
-                {i !== 2 && bar(60, 6, '#444')}
+                {i !== 2 && bar(60, 6, 'var(--bg-input)')}
               </div>
             </div>
           </div>
@@ -616,7 +616,7 @@ function ListPreviewContent() {
   return (
     <div>
       {/* Section 1 */}
-      <div style={{ marginBottom: 4 }}>{bar(60, 8, '#555')}</div>
+      <div style={{ marginBottom: 4 }}>{bar(60, 8, 'var(--bg-input)')}</div>
       {row(100, false, '', ['#777'], [{ c: '#e8384f', w: 40 }, { c: '#aa62e3', w: 36 }])}
       {row(80, false, '', ['#666'], [{ c: '#5da283', w: 40 }])}
       {row(110, false, '', ['#777'], [{ c: '#5da283', w: 40 }])}
@@ -624,13 +624,13 @@ function ListPreviewContent() {
       <div style={{ height: 12 }} />
 
       {/* Section 2 */}
-      <div style={{ marginBottom: 4 }}>{bar(55, 8, '#555')}</div>
+      <div style={{ marginBottom: 4 }}>{bar(55, 8, 'var(--bg-input)')}</div>
       {row(90, false, '', ['#777'], [{ c: '#4cc9f0', w: 40 }, { c: '#aa62e3', w: 36 }, { c: '#f5d365', w: 40 }])}
 
       <div style={{ height: 12 }} />
 
       {/* Section 3 */}
-      <div style={{ marginBottom: 4 }}>{bar(50, 8, '#555')}</div>
+      <div style={{ marginBottom: 4 }}>{bar(50, 8, 'var(--bg-input)')}</div>
       {row(120, true, '#5da283', ['#777'], [{ c: '#5da283', w: 40 }, { c: '#e8384f', w: 36 }])}
       {row(95, true, '#5da283', ['#666'], [{ c: '#5da283', w: 40 }, { c: '#e362e3', w: 36 }])}
       {row(80, true, '#5da283', ['#777'], [{ c: '#5da283', w: 40 }])}
@@ -643,14 +643,14 @@ function ListPreviewContent() {
 function ListPreview({ name }: { name: string }) {
   return (
     <div style={{
-      width: '100%', maxWidth: 560, background: '#2a2b2d', borderRadius: 10,
-      border: '1px solid #3a3b3d', overflow: 'hidden',
+      width: '100%', maxWidth: 560, background: 'var(--bg-card)', borderRadius: 10,
+      border: '1px solid var(--border-default)', overflow: 'hidden',
     }}>
       <div style={{
         padding: '12px 14px 8px', display: 'flex', alignItems: 'center', gap: 8,
-        borderBottom: '1px solid #3a3b3d',
+        borderBottom: '1px solid var(--border-default)',
       }}>
-        <div style={{ width: 20, height: 20, borderRadius: 4, background: '#555' }} />
+        <div style={{ width: 20, height: 20, borderRadius: 4, background: 'var(--bg-input)' }} />
         <span style={{
           fontSize: 13, fontWeight: 500, color: 'var(--text-primary)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 440,
@@ -675,18 +675,18 @@ function BoardPreview() {
     hasAvatar?: boolean; hasImage?: boolean;
   }) => (
     <div style={{
-      background: '#333', borderRadius: 8, padding: 10,
-      border: '1px solid #3a3b3d', display: 'flex', flexDirection: 'column', gap: 6,
+      background: 'var(--bg-row-hover)', borderRadius: 8, padding: 10,
+      border: '1px solid var(--border-default)', display: 'flex', flexDirection: 'column', gap: 6,
     }}>
       {opts.hasImage && (
         <div style={{
-          width: '100%', height: 60, borderRadius: 6, background: '#444',
+          width: '100%', height: 60, borderRadius: 6, background: 'var(--bg-input)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {/* Mountain/image placeholder */}
           <svg width="40" height="30" viewBox="0 0 40 30" fill="none">
             <circle cx="28" cy="8" r="5" fill="#666" />
-            <path d="M0 28 L12 12 L22 22 L28 16 L40 28 Z" fill="#555" />
+            <path d="M0 28 L12 12 L22 22 L28 16 L40 28 Z" fill="var(--bg-input)" />
           </svg>
         </div>
       )}
@@ -711,21 +711,21 @@ function BoardPreview() {
     <div style={{ display: 'flex', gap: 10 }}>
       {/* Column 1 */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div style={{ marginBottom: 2 }}>{bar(50, 7, '#555')}</div>
+        <div style={{ marginBottom: 2 }}>{bar(50, 7, 'var(--bg-input)')}</div>
         {card({ nameW: 70, pills: [{ c: '#e362e3', w: 32 }, { c: '#5da283', w: 28 }] })}
         {card({ nameW: 80, pills: [{ c: '#5da283', w: 32 }, { c: '#f5d365', w: 28 }, { c: '#aa62e3', w: 28 }], hasAvatar: true })}
       </div>
 
       {/* Column 2 */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div style={{ marginBottom: 2 }}>{bar(45, 7, '#555')}</div>
+        <div style={{ marginBottom: 2 }}>{bar(45, 7, 'var(--bg-input)')}</div>
         {card({ nameW: 60, hasImage: true })}
         {card({ nameW: 75, pills: [{ c: '#e8384f', w: 32 }, { c: '#e362e3', w: 28 }] })}
       </div>
 
       {/* Column 3 */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div style={{ marginBottom: 2 }}>{bar(40, 7, '#555')}</div>
+        <div style={{ marginBottom: 2 }}>{bar(40, 7, 'var(--bg-input)')}</div>
         {card({ nameW: 65, pills: [{ c: '#aa62e3', w: 32 }], hasAvatar: true })}
         {card({ nameW: 70, pills: [{ c: '#f5d365', w: 32 }, { c: '#5da283', w: 28 }], hasAvatar: true })}
         <div style={{ height: 20 }} />
@@ -760,7 +760,7 @@ function TimelinePreview() {
       {[0, 1, 2, 3, 4, 5].map(i => (
         <div key={i} style={{
           position: 'absolute', left: `${i * 20}%`, top: 0, bottom: 0,
-          width: 1, background: '#3a3b3d',
+          width: 1, background: 'var(--border-default)',
         }} />
       ))}
 
@@ -768,7 +768,7 @@ function TimelinePreview() {
       <div style={{ display: 'flex', marginBottom: 12 }}>
         {[0, 1, 2, 3, 4].map(i => (
           <div key={i} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            {bar(20, 6, '#444')}
+            {bar(20, 6, 'var(--bg-input)')}
           </div>
         ))}
       </div>
@@ -805,11 +805,11 @@ function DashboardPreview() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {[0, 1, 2, 3].map(i => (
           <div key={i} style={{
-            border: '1px solid #3a3b3d', borderRadius: 8, padding: '14px 10px',
+            border: '1px solid var(--border-default)', borderRadius: 8, padding: '14px 10px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
           }}>
-            {bar(40, 6, '#555')}
-            {bar(30, 10, '#555')}
+            {bar(40, 6, 'var(--bg-input)')}
+            {bar(30, 10, 'var(--bg-input)')}
           </div>
         ))}
       </div>
@@ -818,7 +818,7 @@ function DashboardPreview() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         {/* Bar chart */}
         <div style={{
-          border: '1px solid #3a3b3d', borderRadius: 8, padding: 16,
+          border: '1px solid var(--border-default)', borderRadius: 8, padding: 16,
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 120, justifyContent: 'center' }}>
@@ -833,7 +833,7 @@ function DashboardPreview() {
 
         {/* Donut chart */}
         <div style={{
-          border: '1px solid #3a3b3d', borderRadius: 8, padding: 16,
+          border: '1px solid var(--border-default)', borderRadius: 8, padding: 16,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
         }}>
           <svg width="90" height="90" viewBox="0 0 90 90">
@@ -848,11 +848,11 @@ function DashboardPreview() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: 2, background: '#e07ab0' }} />
-              {bar(40, 6, '#555')}
+              {bar(40, 6, 'var(--bg-input)')}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: 2, background: '#7a3d6e' }} />
-              {bar(40, 6, '#555')}
+              {bar(40, 6, 'var(--bg-input)')}
             </div>
           </div>
         </div>

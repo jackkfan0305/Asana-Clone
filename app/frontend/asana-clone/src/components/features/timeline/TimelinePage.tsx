@@ -593,7 +593,7 @@ export function TimelinePage() {
           {showZoomDropdown && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-              background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+              background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
               padding: 4, width: 160, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
             }}>
               {ZOOM_LEVELS.map(z => (
@@ -639,7 +639,7 @@ export function TimelinePage() {
           {showFilterDropdown && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-              background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+              background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
               padding: 16, width: 420, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -688,7 +688,7 @@ export function TimelinePage() {
           {showSortDropdown && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-              background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+              background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
               padding: 4, width: 180, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
             }}>
               {([['none', 'None'], ['start_date', 'Start date'], ['due_date', 'Due date'], ['assignee', 'Assignee']] as const).map(([val, label]) => (
@@ -760,7 +760,7 @@ export function TimelinePage() {
           )}
 
           {/* Column headers */}
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-divider)', position: 'sticky', top: 0, background: '#1D1F21', zIndex: 5 }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--border-divider)', position: 'sticky', top: 0, background: 'var(--bg-content)', zIndex: 5 }}>
             {cols.map(col => (
               <div key={col.key} style={{
                 flex: useFixedWidth ? undefined : 1,
@@ -966,7 +966,7 @@ export function TimelinePage() {
                 <div style={{
                   width: Math.max(120, 160),
                   height: 32,
-                  background: '#3a3b3d',
+                  background: 'var(--bg-input)',
                   borderRadius: 6,
                   border: '1px solid var(--border-default)',
                   display: 'flex', alignItems: 'center', padding: '0 8px',
@@ -999,7 +999,7 @@ export function TimelinePage() {
           ref={contextMenuRef}
           style={{
             position: 'fixed', left: contextMenu.x, top: contextMenu.y, zIndex: 100,
-            background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+            background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
             padding: 4, width: 180, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
           }}
         >

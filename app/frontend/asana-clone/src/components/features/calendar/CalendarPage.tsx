@@ -42,7 +42,7 @@ export function CalendarPage() {
         </div>
       </div>
       {/* Full-width separator connecting to sidebar */}
-      <div style={{ height: 1, background: '#404244', margin: '12px -24px 16px' }} />
+      <div style={{ height: 1, background: 'var(--border-divider)', margin: '12px -24px 16px' }} />
 
       {/* Day headers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1, marginBottom: 1 }}>

@@ -184,7 +184,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
 
   const dropdownStyle: React.CSSProperties = {
     position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 100,
-    minWidth: 180, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+    minWidth: 180, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
     borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
     overflow: 'hidden', padding: '4px 0',
   };
@@ -199,7 +199,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
       minWidth: 400,
       maxWidth: 600,
       borderLeft: '1px solid var(--border-divider)',
-      background: '#1D1F21',
+      background: 'var(--bg-content)',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
@@ -263,7 +263,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
           {showInvitePopover && (
             <div style={{
               position: 'absolute', top: 32, right: 0, zIndex: 100,
-              width: 280, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+              width: 280, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
               borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
               overflow: 'hidden',
             }}>
@@ -557,7 +557,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                 return (
                   <div style={{
                     position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 200,
-                    width: 300, background: '#232527', border: '1px solid var(--border-divider)',
+                    width: 300, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
                     borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                     padding: 0,
                   }}>
@@ -569,7 +569,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                           flex: 1, display: 'flex', alignItems: 'center', gap: 6,
                           padding: '6px 10px', borderRadius: 6,
                           border: `1px solid ${datePickerMode === 'start' ? 'var(--text-primary)' : 'var(--border-input)'}`,
-                          cursor: 'pointer', background: '#1a1c1e',
+                          cursor: 'pointer', background: 'var(--bg-content)',
                         }}
                       >
                         <span style={{ fontSize: 12, color: task.startDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
@@ -588,7 +588,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                           flex: 1, display: 'flex', alignItems: 'center', gap: 6,
                           padding: '6px 10px', borderRadius: 6,
                           border: `1px solid ${datePickerMode === 'due' ? 'var(--text-primary)' : 'var(--border-input)'}`,
-                          cursor: 'pointer', background: '#1a1c1e',
+                          cursor: 'pointer', background: 'var(--bg-content)',
                         }}
                       >
                         <span style={{ fontSize: 12, color: task.dueDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
@@ -720,7 +720,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
               {showAddProject && (
                 <div style={{
                   position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 100,
-                  minWidth: 240, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+                  minWidth: 240, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
                   borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
                   overflow: 'hidden',
                 }}>
@@ -802,7 +802,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                   {showProjectSectionDropdown && (
                     <div style={{
                       position: 'absolute', top: '100%', right: 0, marginTop: 4, zIndex: 100,
-                      minWidth: 160, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+                      minWidth: 160, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
                       borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
                       overflow: 'hidden',
                     }}>
@@ -894,7 +894,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                       {showPriorityDropdown && (
                         <div style={{
                           position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 100,
-                          minWidth: 160, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+                          minWidth: 160, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
                           borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
                           overflow: 'hidden', padding: '4px 0',
                         }}>
@@ -972,7 +972,7 @@ export function TaskDetailPane({ closing }: { closing?: boolean }) {
                       {showStatusDropdown && (
                         <div style={{
                           position: 'absolute', top: '100%', left: 0, marginTop: 4, zIndex: 100,
-                          minWidth: 160, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+                          minWidth: 160, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
                           borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
                           overflow: 'hidden', padding: '4px 0',
                         }}>

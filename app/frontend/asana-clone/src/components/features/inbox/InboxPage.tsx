@@ -88,7 +88,7 @@ export function InboxPage() {
 
   const dropdownStyle: React.CSSProperties = {
     position: 'absolute', top: '100%', left: 0, marginTop: 4,
-    background: '#2a2b2d', border: '1px solid #3a3b3d', borderRadius: 8,
+    background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
     padding: '4px 0', zIndex: 100, minWidth: 160, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
   };
 
@@ -100,7 +100,7 @@ export function InboxPage() {
   });
 
   return (
-    <div style={{ background: '#1D1F21', margin: '-16px -24px', padding: '16px 24px', minHeight: 'calc(100vh - var(--topbar-height))' }}>
+    <div style={{ background: 'var(--bg-content)', margin: '-16px -24px', padding: '16px 24px', minHeight: 'calc(100vh - var(--topbar-height))' }}>
       {/* Title row */}
       <div style={{ marginBottom: 0 }}>
         <h1 style={{ fontSize: 20, fontWeight: 400 }}>Inbox</h1>
@@ -130,7 +130,7 @@ export function InboxPage() {
         </button>
       </div>
       {/* Full-width separator connecting to sidebar */}
-      <div style={{ height: 1, background: '#404244', margin: '9px -24px 8px' }} />
+      <div style={{ height: 1, background: 'var(--border-default)', margin: '9px -24px 8px' }} />
 
       {/* Filter & Sort bar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 12 }}>
@@ -219,7 +219,7 @@ export function InboxPage() {
           {showMoreMenu && (
             <div style={{
               position: 'absolute', right: 0, top: '100%', marginTop: 4,
-              background: '#2a2b2d', border: '1px solid #3a3b3d', borderRadius: 8,
+              background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
               padding: '8px 0', zIndex: 100, minWidth: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
             }}>
               <button
@@ -276,7 +276,7 @@ export function InboxPage() {
                 <div
                   style={{
                     display: 'flex', alignItems: 'center', gap: 0,
-                    background: '#2a2b2d', border: '1px solid #3a3b3d', borderRadius: 8,
+                    background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
                     padding: '2px 4px', flexShrink: 0, marginTop: 0,
                   }}
                   onClick={e => e.stopPropagation()}

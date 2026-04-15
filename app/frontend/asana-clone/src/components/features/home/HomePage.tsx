@@ -187,7 +187,7 @@ export function HomePage() {
                 {tasksMenuOpen && (
                   <div style={{
                     position: 'absolute', top: '100%', right: 0, marginTop: 4,
-                    background: '#2a2b2d', border: '1px solid var(--border-default)',
+                    background: 'var(--bg-card)', border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-card)', padding: '4px 0',
                     boxShadow: 'var(--shadow-dropdown)', zIndex: 20, minWidth: 200,
                   }}>
@@ -349,7 +349,7 @@ export function HomePage() {
                 {projectsMenuOpen && (
                   <div style={{
                     position: 'absolute', top: '100%', right: 0, marginTop: 4,
-                    background: '#2a2b2d', border: '1px solid var(--border-default)',
+                    background: 'var(--bg-card)', border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-card)', padding: '4px 0',
                     boxShadow: 'var(--shadow-dropdown)', zIndex: 20, minWidth: 200,
                   }}>
@@ -448,11 +448,11 @@ export function HomePage() {
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {p.name}
                       </div>
-                      {dueSoonCount > 0 && (
-                        <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
-                          {dueSoonCount} task{dueSoonCount !== 1 ? 's' : ''} due soon
-                        </div>
-                      )}
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
+                        {dueSoonCount > 0
+                          ? `${dueSoonCount} task${dueSoonCount !== 1 ? 's' : ''} due soon`
+                          : `${projectTasks.length} task${projectTasks.length !== 1 ? 's' : ''}`}
+                      </div>
                     </div>
                   </div>
                 );

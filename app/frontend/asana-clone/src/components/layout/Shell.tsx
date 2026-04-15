@@ -45,10 +45,10 @@ export function Shell() {
           flex: 1,
           display: 'flex',
           overflow: 'hidden',
-          borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-          borderTopLeftRadius: 10,
-          background: 'var(--bg-sidebar)',
+          borderLeft: 'none',
+          borderTop: 'none',
+          borderTopLeftRadius: 0,
+          background: '#2A2C2E',
         }}>
           <div style={{
             width: sidebarExpanded ? 'var(--sidebar-panel-width)' : 0,
@@ -61,7 +61,7 @@ export function Shell() {
           </div>
           <div style={{
             flex: 1, display: 'flex', overflow: 'hidden', position: 'relative',
-            background: isHome ? 'linear-gradient(to top right, #1a1b1d 0%, #3a3b3d 100%)' : '#1D1F21',
+            background: isHome ? 'var(--bg-home-gradient)' : 'var(--bg-content)',
           }}>
             <div style={{
               flex: 1, overflow: 'auto', padding: '16px 24px',

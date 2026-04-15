@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import { useApp } from '../../data/AppContext';
-import { useAuth } from '../../api/authStore';
-import { logout } from '../../api/client';
 import { useNavigate } from 'react-router-dom';
-import { Search, Settings, ChevronLeft, ChevronRight, Clock, Menu, Plus, LogOut, User } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Clock, Menu, Plus, HelpCircle, Sparkles } from 'lucide-react';
 
 // Asana three-dot logo mark
 function AsanaLogo() {
@@ -20,15 +17,16 @@ export function Topbar() {
   const { searchQuery, setSearchQuery, setSearchOpen, setSidebarExpanded } = useApp();
   const navigate = useNavigate();
 
+  /* Topbar always stays dark regardless of theme */
   const iconBtn = (children: React.ReactNode, title?: string, onClick?: () => void) => (
     <button
       onClick={onClick}
       title={title}
       style={{
-        color: 'var(--text-secondary)', padding: 6, display: 'flex', borderRadius: 4,
+        color: '#a2a0a2', padding: 6, display: 'flex', borderRadius: 4,
         alignItems: 'center', justifyContent: 'center',
       }}
-      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+      onMouseEnter={e => e.currentTarget.style.background = '#3a3b3d'}
       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
       {children}
@@ -38,7 +36,7 @@ export function Topbar() {
   return (
     <div style={{
       height: 'var(--topbar-height)',
-      background: 'var(--bg-topbar)',
+      background: '#2e2f31',
       display: 'flex',
       alignItems: 'center',
       padding: '0 12px',
@@ -52,8 +50,8 @@ export function Topbar() {
       <button
         onClick={() => navigate('/create-project')}
         style={{
-          background: '#404040',
-          color: '#fff',
+          background: '#353638',
+          color: '#f1f1f1',
           padding: '4px 16px 4px 4px',
           borderRadius: 50,
           fontWeight: 500,
@@ -66,8 +64,8 @@ export function Topbar() {
           cursor: 'pointer',
           letterSpacing: -0.2,
         }}
-        onMouseEnter={e => e.currentTarget.style.background = '#4a4a4a'}
-        onMouseLeave={e => e.currentTarget.style.background = '#404040'}
+        onMouseEnter={e => e.currentTarget.style.background = '#404142'}
+        onMouseLeave={e => e.currentTarget.style.background = '#353638'}
       >
         <span style={{
           width: 28,
@@ -96,7 +94,7 @@ export function Topbar() {
       <div style={{ flex: 1, maxWidth: 480, position: 'relative' }}>
         <Search size={14} strokeWidth={2} style={{
           position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-          color: 'var(--text-placeholder)',
+          color: '#6d6e6f',
         }} />
         <input
           type="text"
@@ -108,10 +106,10 @@ export function Topbar() {
             width: '100%',
             padding: '6px 14px 6px 32px',
             borderRadius: 20,
-            background: 'var(--bg-input)',
-            border: '1px solid var(--border-default)',
+            background: '#353638',
+            border: '1px solid #3a3b3d',
             fontSize: 13,
-            color: 'var(--text-primary)',
+            color: '#f1f1f1',
           }}
         />
       </div>
@@ -123,79 +121,39 @@ export function Topbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginRight: 4 }}>
           <AsanaLogo />
           <span style={{
-            fontWeight: 500, color: 'var(--text-secondary)', fontSize: 14,
+            fontWeight: 500, color: '#a2a0a2', fontSize: 14,
             letterSpacing: -0.3,
           }}>asana</span>
         </div>
-        {iconBtn(<Settings size={16} strokeWidth={1.5} />, 'Settings', () => navigate('/settings'))}
-        <UserMenu />
+        <button
+          title="Help"
+          style={{
+            width: 32, height: 32, borderRadius: '50%',
+            border: '2px solid #6d6e6f',
+            background: 'transparent',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#a2a0a2', cursor: 'pointer',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = '#3a3b3d'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <HelpCircle size={18} strokeWidth={1.5} />
+        </button>
+        <button
+          title="AI Assistant"
+          style={{
+            width: 32, height: 32, borderRadius: '50%',
+            border: '2px solid #f06a6a',
+            background: 'transparent',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#f06a6a', cursor: 'pointer',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(240, 106, 106, 0.1)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <Sparkles size={16} strokeWidth={1.5} />
+        </button>
       </div>
-    </div>
-  );
-}
-
-function UserMenu() {
-  const { user, setUser } = useAuth();
-  const [open, setOpen] = useState(false);
-
-  const handleLogout = async () => {
-    await logout();
-    setUser(null);
-  };
-
-  if (!user) return null;
-
-  return (
-    <div style={{ position: 'relative' }}>
-      <button
-        onClick={() => setOpen(v => !v)}
-        title={user.name}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '4px 8px',
-          borderRadius: 'var(--radius-btn)', color: 'var(--text-secondary)',
-          cursor: 'pointer',
-        }}
-        onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-      >
-        {user.avatar_url
-          ? <img src={user.avatar_url} alt="" style={{ width: 24, height: 24, borderRadius: '50%' }} />
-          : <User size={16} strokeWidth={1.5} />
-        }
-      </button>
-
-      {open && (
-        <>
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
-            onClick={() => setOpen(false)}
-          />
-          <div style={{
-            position: 'absolute', right: 0, top: '100%', marginTop: 4,
-            background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
-            borderRadius: 'var(--radius-card)', padding: 4, minWidth: 180,
-            boxShadow: 'var(--shadow-dropdown)', zIndex: 100,
-          }}>
-            <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--border-divider)' }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{user.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{user.email}</div>
-            </div>
-            <button
-              onClick={handleLogout}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-                padding: '8px 12px', borderRadius: 4, fontSize: 13,
-                color: 'var(--text-secondary)', cursor: 'pointer',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <LogOut size={14} strokeWidth={1.5} />
-              Log out
-            </button>
-          </div>
-        </>
-      )}
     </div>
   );
 }

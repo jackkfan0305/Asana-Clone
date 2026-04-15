@@ -28,8 +28,8 @@ export function Sidebar() {
           gap: 8,
           padding: '5px 12px 5px 16px',
           borderRadius: 'var(--radius-btn)',
-          color: active ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
-          background: active ? 'var(--bg-sidebar-selected)' : 'transparent',
+          color: active ? '#ffffff' : '#c8c8c8',
+          background: active ? '#404142' : 'transparent',
           width: 'calc(100% - 12px)',
           marginLeft: 6,
           textAlign: 'left',
@@ -37,7 +37,7 @@ export function Sidebar() {
           transition: 'background 0.1s',
           height: 34,
         }}
-        onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
+        onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#3a3b3d'; }}
         onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
       >
         {Icon && <Icon size={15} strokeWidth={1.8} style={{ flexShrink: 0, opacity: 0.8 }} />}
@@ -65,15 +65,15 @@ export function Sidebar() {
   const sectionHeader = (label: string, showPlus?: boolean) => (
     <div style={{
       padding: '14px 12px 6px 16px', marginLeft: 6,
-      fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+      fontSize: 11, color: '#6d6e6f', textTransform: 'none', fontWeight: 600,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       letterSpacing: 0.5,
     }}>
       <span>{label}</span>
       {showPlus && (
-        <button style={{ color: 'var(--text-placeholder)', padding: 0, display: 'flex' }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--text-sidebar)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}
+        <button style={{ color: '#6d6e6f', padding: 0, display: 'flex' }}
+          onMouseEnter={e => e.currentTarget.style.color = '#c8c8c8'}
+          onMouseLeave={e => e.currentTarget.style.color = '#6d6e6f'}
         >
           <Plus size={13} strokeWidth={2} />
         </button>
@@ -82,7 +82,7 @@ export function Sidebar() {
   );
 
   const divider = () => (
-    <div style={{ height: 1, background: '#626364', margin: '8px 0' }} />
+    <div style={{ height: 1, background: '#353638', margin: '8px 0' }} />
   );
 
   return (
@@ -90,7 +90,7 @@ export function Sidebar() {
       width: 'var(--sidebar-panel-width)',
       minWidth: 'var(--sidebar-panel-width)',
       height: '100%',
-      background: 'var(--bg-sidebar)',
+      background: '#2A2C2E',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
@@ -103,7 +103,7 @@ export function Sidebar() {
         {navItem('Inbox', '/inbox', Inbox, unread > 0 ? unread : undefined)}
 
         {/* Full-width divider — aligns with page header borders */}
-        <div style={{ height: 1, background: '#626364', margin: '8px 0' }} />
+        <div style={{ height: 1, background: '#353638', margin: '8px 0' }} />
 
         {panel === 'work' && (
           <>
@@ -118,7 +118,7 @@ export function Sidebar() {
             {/* Collapsible Work section with projects & portfolios */}
             <div style={{
               padding: '10px 12px 4px 16px', marginLeft: 6,
-              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+              fontSize: 11, color: '#6d6e6f', textTransform: 'none', fontWeight: 600,
               display: 'flex', alignItems: 'center', gap: 4, letterSpacing: 0.5,
               cursor: 'pointer',
             }}
@@ -131,9 +131,9 @@ export function Sidebar() {
               <span style={{ flex: 1 }}>Work</span>
               <button
                 onClick={e => { e.stopPropagation(); navigate('/create-project'); }}
-                style={{ color: 'var(--text-placeholder)', padding: 0, display: 'flex' }}
-                onMouseEnter={e => e.currentTarget.style.color = 'var(--text-sidebar)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-placeholder)'}
+                style={{ color: '#6d6e6f', padding: 0, display: 'flex' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#c8c8c8'}
+                onMouseLeave={e => e.currentTarget.style.color = '#6d6e6f'}
               >
                 <Plus size={13} strokeWidth={2} />
               </button>
@@ -152,11 +152,11 @@ export function Sidebar() {
                         padding: '5px 12px 5px 28px',
                         width: 'calc(100% - 12px)', marginLeft: 6,
                         textAlign: 'left', fontSize: 13,
-                        color: active ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
-                        background: active ? 'var(--bg-sidebar-selected)' : 'transparent',
+                        color: active ? '#ffffff' : '#c8c8c8',
+                        background: active ? '#404142' : 'transparent',
                         borderRadius: 'var(--radius-btn)', height: 28,
                       }}
-                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
+                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#3a3b3d'; }}
                       onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <span style={{
@@ -206,10 +206,10 @@ export function Sidebar() {
                 padding: '5px 12px 5px 16px', marginLeft: 6,
                 width: 'calc(100% - 12px)', textAlign: 'left',
                 borderRadius: 'var(--radius-btn)', fontSize: 13,
-                color: 'var(--text-sidebar)', background: 'transparent',
+                color: '#c8c8c8', background: 'transparent',
                 height: 34,
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+              onMouseEnter={e => e.currentTarget.style.background = '#3a3b3d'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               <Avatar userId={currentUserId} size={24} />
@@ -219,7 +219,7 @@ export function Sidebar() {
             {/* Team collapsible header */}
             <div style={{
               padding: '10px 12px 4px 16px', marginLeft: 6,
-              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+              fontSize: 11, color: '#6d6e6f', textTransform: 'none', fontWeight: 600,
               display: 'flex', alignItems: 'center', gap: 4, letterSpacing: 0.5,
               cursor: 'pointer',
             }}
@@ -239,11 +239,11 @@ export function Sidebar() {
                   padding: '5px 12px 5px 16px', marginLeft: 6,
                   width: 'calc(100% - 12px)', textAlign: 'left',
                   borderRadius: 'var(--radius-btn)', fontSize: 13,
-                  color: isActive('/teams') ? 'var(--text-sidebar-active)' : 'var(--text-sidebar)',
-                  background: isActive('/teams') ? 'var(--bg-sidebar-selected)' : 'transparent',
+                  color: isActive('/teams') ? '#ffffff' : '#c8c8c8',
+                  background: isActive('/teams') ? '#404142' : 'transparent',
                   height: 34, justifyContent: 'space-between',
                 }}
-                onMouseEnter={e => { if (!isActive('/teams')) e.currentTarget.style.background = 'var(--bg-sidebar-hover)'; }}
+                onMouseEnter={e => { if (!isActive('/teams')) e.currentTarget.style.background = '#3a3b3d'; }}
                 onMouseLeave={e => { if (!isActive('/teams')) e.currentTarget.style.background = 'transparent'; }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

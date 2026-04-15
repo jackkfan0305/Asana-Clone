@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProvider } from './data/AppContext';
+import { ThemeProvider } from './data/ThemeContext';
 import { AuthContext } from './api/authStore';
 import { fetchCurrentUser, type AuthUser } from './api/client';
 
@@ -55,8 +56,8 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#1e1f21',
-        color: '#a2a0a2',
+        background: 'var(--bg-content)',
+        color: 'var(--text-secondary)',
       }}>
         Loading...
       </div>
@@ -64,6 +65,7 @@ export default function App() {
   }
 
   return (
+    <ThemeProvider>
     <QueryClientProvider client={queryClient}>
     <AuthContext.Provider value={{ user, loading, setUser }}>
       <BrowserRouter>
@@ -112,5 +114,6 @@ export default function App() {
       </BrowserRouter>
     </AuthContext.Provider>
     </QueryClientProvider>
+    </ThemeProvider>
   );
 }

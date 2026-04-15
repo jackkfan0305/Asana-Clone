@@ -193,7 +193,7 @@ export function ProjectOverview() {
             {showAddMember && (
               <div style={{
                 position: 'absolute', left: 0, top: '100%', marginTop: 4,
-                background: '#2a2b2d', border: '1px solid #3a3b3d', borderRadius: 8,
+                background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
                 padding: 4, zIndex: 100, minWidth: 220, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
               }}>
                 <div style={{ padding: '6px 10px', fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -305,7 +305,7 @@ export function ProjectOverview() {
               {showStatusDropdown && (
                 <div style={{
                   position: 'absolute', right: 0, top: '100%', marginTop: 4,
-                  background: '#2a2b2d', border: '1px solid #3a3b3d', borderRadius: 8,
+                  background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
                   padding: 4, zIndex: 100, minWidth: 140, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
                 }}>
                   {statusOptions.map(opt => (
