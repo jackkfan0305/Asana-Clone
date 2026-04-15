@@ -1,27 +1,65 @@
 import { useState, type FormEvent } from 'react';
-import { login } from '../../../api/client';
+import { login, register } from '../../../api/client';
 import { useAuth } from '../../../api/authStore';
+
+type Mode = 'login' | 'register';
 
 export function LoginPage() {
   const { setUser } = useAuth();
+  const [mode, setMode] = useState<Mode>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  function switchMode(newMode: Mode) {
+    setMode(newMode);
+    setError('');
+    setFieldErrors({});
+  }
+
+  function validateRegister(): boolean {
+    const errors: Record<string, string> = {};
+    if (!name.trim()) errors.name = 'Name is required';
+    if (!email.trim()) errors.email = 'Email is required';
+    else if (!email.includes('@')) errors.email = 'Enter a valid email address';
+    if (username.length < 3) errors.username = 'Username must be at least 3 characters';
+    if (password.length < 8) errors.password = 'Password must be at least 8 characters';
+    if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
+
+    if (mode === 'register' && !validateRegister()) return;
+
     setLoading(true);
     try {
-      const data = await login(username, password);
-      setUser(data.user);
+      if (mode === 'login') {
+        const data = await login(username, password);
+        setUser(data.user);
+      } else {
+        const data = await register(username, password, name, email);
+        setUser(data.user);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : `${mode === 'login' ? 'Login' : 'Registration'} failed`);
     } finally {
       setLoading(false);
     }
   }
+
+  const isLoginDisabled = loading || !username;
+  const isRegisterDisabled = loading || !username || !password || !name || !email;
+  const isDisabled = mode === 'login' ? isLoginDisabled : isRegisterDisabled;
 
   return (
     <div style={{
@@ -35,11 +73,31 @@ export function LoginPage() {
         background: 'var(--bg-card, #2a2b2d)',
         borderRadius: '12px',
         padding: '40px',
-        width: '360px',
+        width: '380px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px',
+        gap: '12px',
       }}>
+        {/* Decorative Asana-style color dots */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '8px',
+          marginBottom: '8px',
+        }}>
+          {['#f06a6a', '#f1bd6c', '#5da283', '#4573d2', '#9b7ddb'].map((color) => (
+            <div
+              key={color}
+              style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                background: color,
+              }}
+            />
+          ))}
+        </div>
+
         <h1 style={{
           color: 'var(--text-primary, #f1f1f1)',
           fontSize: '24px',
@@ -47,15 +105,17 @@ export function LoginPage() {
           textAlign: 'center',
           margin: 0,
         }}>
-          Asana Clone
+          {mode === 'login' ? 'Welcome back' : 'Create your account'}
         </h1>
         <p style={{
           color: 'var(--text-secondary, #a2a0a2)',
           fontSize: '14px',
           textAlign: 'center',
-          margin: 0,
+          margin: '0 0 8px 0',
         }}>
-          Sign in to continue
+          {mode === 'login'
+            ? 'Sign in to your Asana Clone account'
+            : 'Get started with Asana Clone for free'}
         </p>
 
         {error && (
@@ -70,41 +130,70 @@ export function LoginPage() {
           </div>
         )}
 
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          autoFocus
-          style={{
-            background: 'var(--bg-input, #353638)',
-            border: '1px solid transparent',
-            borderRadius: '6px',
-            padding: '10px 12px',
-            color: 'var(--text-primary, #f1f1f1)',
-            fontSize: '14px',
-            outline: 'none',
-          }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{
-            background: 'var(--bg-input, #353638)',
-            border: '1px solid transparent',
-            borderRadius: '6px',
-            padding: '10px 12px',
-            color: 'var(--text-primary, #f1f1f1)',
-            fontSize: '14px',
-            outline: 'none',
-          }}
-        />
+        {mode === 'register' && (
+          <>
+            <div>
+              <input
+                type="text"
+                placeholder="Full name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                autoFocus
+                style={inputStyle}
+              />
+              {fieldErrors.name && <FieldError message={fieldErrors.name} />}
+            </div>
+            <div>
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={inputStyle}
+              />
+              {fieldErrors.email && <FieldError message={fieldErrors.email} />}
+            </div>
+          </>
+        )}
+
+        <div>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            autoFocus={mode === 'login'}
+            style={inputStyle}
+          />
+          {fieldErrors.username && <FieldError message={fieldErrors.username} />}
+        </div>
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={inputStyle}
+          />
+          {fieldErrors.password && <FieldError message={fieldErrors.password} />}
+        </div>
+
+        {mode === 'register' && (
+          <div>
+            <input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              style={inputStyle}
+            />
+            {fieldErrors.confirmPassword && <FieldError message={fieldErrors.confirmPassword} />}
+          </div>
+        )}
 
         <button
           type="submit"
-          disabled={loading || !username}
+          disabled={isDisabled}
           style={{
             background: 'var(--color-primary, #4573d2)',
             color: '#fff',
@@ -114,20 +203,91 @@ export function LoginPage() {
             fontSize: '14px',
             fontWeight: 600,
             cursor: loading ? 'wait' : 'pointer',
-            opacity: loading || !username ? 0.6 : 1,
+            opacity: isDisabled ? 0.6 : 1,
+            marginTop: '4px',
           }}
         >
-          {loading ? 'Signing in...' : 'Sign in'}
+          {loading
+            ? (mode === 'login' ? 'Signing in...' : 'Creating account...')
+            : (mode === 'login' ? 'Log in' : 'Sign up')}
         </button>
 
         <div style={{
-          color: 'var(--text-placeholder, #6d6e6f)',
-          fontSize: '12px',
+          color: 'var(--text-secondary, #a2a0a2)',
+          fontSize: '13px',
           textAlign: 'center',
+          marginTop: '8px',
         }}>
-          Try: admin / admin
+          {mode === 'login' ? (
+            <>
+              Don&apos;t have an account?{' '}
+              <button
+                type="button"
+                onClick={() => switchMode('register')}
+                style={linkButtonStyle}
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => switchMode('login')}
+                style={linkButtonStyle}
+              >
+                Log in
+              </button>
+            </>
+          )}
         </div>
+
+        {mode === 'login' && (
+          <div style={{
+            color: 'var(--text-placeholder, #6d6e6f)',
+            fontSize: '12px',
+            textAlign: 'center',
+          }}>
+            Try: admin / admin
+          </div>
+        )}
       </form>
+    </div>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: 'var(--bg-input, #353638)',
+  border: '1px solid transparent',
+  borderRadius: '6px',
+  padding: '10px 12px',
+  color: 'var(--text-primary, #f1f1f1)',
+  fontSize: '14px',
+  outline: 'none',
+  boxSizing: 'border-box',
+};
+
+const linkButtonStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: 'var(--color-primary, #4573d2)',
+  cursor: 'pointer',
+  fontSize: '13px',
+  padding: 0,
+  fontWeight: 500,
+};
+
+function FieldError({ message }: { message: string }) {
+  return (
+    <div style={{
+      color: 'var(--color-error, #e8384f)',
+      fontSize: '12px',
+      marginTop: '4px',
+      paddingLeft: '2px',
+    }}>
+      {message}
     </div>
   );
 }
