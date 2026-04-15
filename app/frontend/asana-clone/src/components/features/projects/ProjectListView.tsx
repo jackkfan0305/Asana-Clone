@@ -5,7 +5,7 @@ import { Checkbox } from '../../common/Checkbox';
 import { Avatar } from '../../common/Avatar';
 import { StatusBadge } from '../../common/Badge';
 import {
-  Filter, ArrowUpDown, Group, Search, Plus, X, GripVertical, ChevronDown,
+  Filter, ArrowUpDown, Group, Search, Plus, X, GripVertical, MoreHorizontal, Trash2,
 } from 'lucide-react';
 
 type SortField = 'none' | 'start_date' | 'due_date' | 'created_on' | 'alphabetical';
@@ -28,7 +28,7 @@ function FilterPanel({ filters, setFilters, onClose }: {
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 240, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -85,7 +85,7 @@ function SortPanel({ sort, setSort, onClose }: { sort: SortField; setSort: (s: S
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 4, width: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       {options.map(opt => (
@@ -116,7 +116,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 240, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -140,7 +140,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
 
 export function ProjectListView() {
   const { projectId } = useParams();
-  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, addSection, renameSection } = useApp();
+  const { tasks, sections, completeTask, addTask, setSelectedTaskId, updateTask, reorderTasks, projects, addSection, renameSection, deleteTask } = useApp();
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [addingToSection, setAddingToSection] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -163,6 +163,18 @@ export function ProjectListView() {
   const [filters, setFilters] = useState({ incomplete: true, completed: false, dueThisWeek: false, dueNextWeek: false });
   const [sort, setSort] = useState<SortField>('none');
   const [group, setGroup] = useState<GroupField>('sections');
+  const [contextMenuTaskId, setContextMenuTaskId] = useState<string | null>(null);
+
+  // Close context menu on outside click
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!contextMenuTaskId) return;
+    const handler = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) setContextMenuTaskId(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [contextMenuTaskId]);
 
   const project = projects.find(p => p.id === projectId);
   if (!project) return <div style={{ padding: 32, color: 'var(--text-secondary)' }}>Project not found</div>;
@@ -231,32 +243,21 @@ export function ProjectListView() {
     setDropTargetSection(null);
   };
 
-  const gridCols = '24px 30px 1fr 100px 120px 80px 80px';
+  const gridCols = '24px 30px 1fr 100px 120px 80px 80px 28px';
 
   return (
     <div>
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '12px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          <button onClick={() => handleShowAddRow(projectSections[0]?.id)} style={{
-            display: 'flex', alignItems: 'center', gap: 5, background: 'var(--color-success)', color: '#fff',
-            padding: '5px 14px', fontSize: 13, fontWeight: 500, borderRadius: '6px 0 0 6px',
-            border: 'none', cursor: 'pointer',
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-            <Plus size={13} strokeWidth={2.5} />Add task
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', padding: '5px 6px',
-            background: 'var(--color-success)', color: '#fff', border: 'none',
-            borderLeft: '1px solid rgba(255,255,255,0.2)', borderRadius: '0 6px 6px 0', cursor: 'pointer',
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-            <ChevronDown size={13} strokeWidth={2} />
-          </button>
-        </div>
+        <button onClick={() => handleShowAddRow(projectSections[0]?.id)} style={{
+          display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: 'var(--text-secondary)',
+          padding: '5px 12px', fontSize: 12, fontWeight: 400, borderRadius: 6,
+          border: '1px solid var(--border-default)',
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+          <Plus size={13} strokeWidth={2} />Add task
+        </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
           {/* Filter */}
           <div style={{ position: 'relative' }}>
@@ -322,7 +323,7 @@ export function ProjectListView() {
         display: 'grid', gridTemplateColumns: gridCols,
         gap: 8, padding: '4px 0', borderBottom: '1px solid var(--border-table)', fontSize: 12, color: 'var(--text-secondary)',
       }}>
-        <span></span><span></span><span>Name</span><span>Assignee</span><span>Due date</span><span>Priority</span><span>Status</span>
+        <span></span><span></span><span>Name</span><span>Assignee</span><span>Due date</span><span>Priority</span><span>Status</span><span></span>
       </div>
 
       {/* Empty state for new projects */}
@@ -352,6 +353,7 @@ export function ProjectListView() {
                 width: 20, height: 20, borderRadius: '50%',
                 border: '1.5px solid var(--border-input)',
               }} />
+              <span />
               <span />
               <span />
             </div>
@@ -449,7 +451,7 @@ export function ProjectListView() {
                   {section.name}
                 </span>
               )}
-              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
             </div>
 
             {!collapsed.has(section.id) && (
@@ -506,6 +508,7 @@ export function ProjectListView() {
                     </div>
                     <span />
                     <span />
+                    <span />
                   </div>
                 )}
 
@@ -528,8 +531,20 @@ export function ProjectListView() {
                         opacity: isDragging ? 0.4 : 1,
                         borderTop: isTaskDropTarget ? '2px solid #4E72CA' : '2px solid transparent',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-row-hover)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = 'var(--bg-row-hover)';
+                        const menuBtn = e.currentTarget.querySelector('.row-menu-btn') as HTMLElement;
+                        if (menuBtn) menuBtn.style.opacity = '1';
+                        const dragHandle = e.currentTarget.querySelector('.drag-handle svg') as HTMLElement;
+                        if (dragHandle) dragHandle.style.opacity = '1';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = 'transparent';
+                        const menuBtn = e.currentTarget.querySelector('.row-menu-btn') as HTMLElement;
+                        if (menuBtn) menuBtn.style.opacity = '0';
+                        const dragHandle = e.currentTarget.querySelector('.drag-handle svg') as HTMLElement;
+                        if (dragHandle) dragHandle.style.opacity = '0';
+                      }}
                     >
                       <span
                         onMouseDown={() => setDragTaskId(task.id)}
@@ -547,6 +562,34 @@ export function ProjectListView() {
                       </span>
                       {task.customFieldValues.cf1 ? <StatusBadge status={task.customFieldValues.cf1} /> : <span>-</span>}
                       {task.customFieldValues.cf2 ? <StatusBadge status={task.customFieldValues.cf2} /> : <span>-</span>}
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <button
+                          className="row-menu-btn"
+                          onClick={e => { e.stopPropagation(); setContextMenuTaskId(contextMenuTaskId === task.id ? null : task.id); }}
+                          style={{ color: 'var(--text-placeholder)', display: 'flex', padding: 2, borderRadius: 3, opacity: 0 }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <MoreHorizontal size={14} />
+                        </button>
+                        {contextMenuTaskId === task.id && (
+                          <div ref={contextMenuRef} style={{
+                            position: 'absolute', top: 0, right: 0, zIndex: 60, marginTop: 24,
+                            background: 'var(--bg-content)', border: '1px solid var(--border-default)', borderRadius: 8,
+                            padding: 4, width: 180, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                          }}>
+                            <button onClick={(e) => { e.stopPropagation(); deleteTask(task.id); setContextMenuTaskId(null); }} style={{
+                              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', width: '100%',
+                              borderRadius: 4, fontSize: 14, color: '#e8637a',
+                            }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Trash2 size={16} /> Delete task
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -600,7 +643,7 @@ export function ProjectListView() {
               padding: '4px 0',
             }}
           />
-          <span /><span /><span /><span />
+          <span /><span /><span /><span /><span />
         </div>
       ) : (
         <button

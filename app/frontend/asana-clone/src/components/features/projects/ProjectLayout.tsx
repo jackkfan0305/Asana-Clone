@@ -56,7 +56,7 @@ function StatusDropdown({ onSelect, onClose }: {
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', left: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 280, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 10 }}>Draft an update</div>
@@ -120,13 +120,6 @@ export function ProjectLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Portfolio breadcrumb */}
-      {project.teamId && (
-        <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>
-          My first portfolio
-        </div>
-      )}
-
       {/* Project header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
         <ProjectIcon color={project.color} />
@@ -179,7 +172,7 @@ export function ProjectLayout() {
       </div>
 
       {/* View tabs — full-width border connects to sidebar divider */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #404244', marginBottom: 0, margin: '4.5px -24px 0', padding: '0 24px' }}>
+      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-divider)', marginBottom: 0, margin: '4.5px -24px 0', padding: '0 24px' }}>
         {filteredTabs.map(vt => (
           <button key={vt.key} onClick={() => handleViewChange(vt.key)} style={{
             padding: '8px 12px', fontSize: 13,

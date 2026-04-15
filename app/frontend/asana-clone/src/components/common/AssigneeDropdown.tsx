@@ -53,7 +53,7 @@ export function AssigneeDropdown({ assigneeId, onSelect, teamId, position = 'bel
       ref={ref}
       style={{
         position: 'absolute', top: '100%', marginTop: 4, zIndex: 200,
-        width: 300, background: '#2a2d2f', border: '1px solid var(--border-divider)',
+        width: 300, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
         borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
         overflow: 'hidden',
         ...positionStyle,

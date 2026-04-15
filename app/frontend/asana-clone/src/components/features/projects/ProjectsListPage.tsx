@@ -131,7 +131,7 @@ export function ProjectsListPage() {
 
   const dropdownStyle: React.CSSProperties = {
     position: 'absolute', top: '100%', left: 0, zIndex: 50, marginTop: 4,
-    background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+    background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
     padding: 8, minWidth: 280, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
   };
 
@@ -169,7 +169,7 @@ export function ProjectsListPage() {
         </button>
       </div>
       {/* Full-width separator connecting to sidebar */}
-      <div style={{ height: 1, background: '#404244', margin: '38px -24px 20px' }} />
+      <div style={{ height: 1, background: 'var(--border-divider)', margin: '38px -24px 20px' }} />
 
       {/* Search */}
       <div style={{ position: 'relative', marginBottom: 12 }}>
@@ -460,7 +460,7 @@ export function ProjectsListPage() {
             {showSortDropdown && (
               <div style={{
                 position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-                background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+                background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
                 padding: 6, minWidth: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
               }}>
                 {([

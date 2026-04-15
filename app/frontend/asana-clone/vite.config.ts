@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/step': 'http://localhost:8000',
-      '/tools': 'http://localhost:8000',
-      '/health': 'http://localhost:8000',
-      '/reset': 'http://localhost:8000',
-      '/snapshot': 'http://localhost:8000',
-      '/auth': 'http://localhost:8000',
+      '/step': 'http://localhost:8030',
+      '/tools': 'http://localhost:8030',
+      '/health': 'http://localhost:8030',
+      '/reset': 'http://localhost:8030',
+      '/snapshot': 'http://localhost:8030',
+      '/auth': 'http://localhost:8030',
     },
   },
 })

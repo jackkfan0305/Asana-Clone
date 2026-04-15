@@ -8,7 +8,7 @@ import { DatePickerCalendar } from '../../common/DatePickerCalendar';
 import { StatusBadge } from '../../common/Badge';
 import type { Task } from '../../../types';
 import {
-  Filter, ArrowUpDown, Group, Search, Plus, X, Trash2, MoreHorizontal, ChevronDown,
+  Filter, ArrowUpDown, Group, Search, Plus, X, Trash2, MoreHorizontal,
 } from 'lucide-react';
 
 type SortField = 'none' | 'start_date' | 'due_date' | 'created_on' | 'alphabetical';
@@ -39,7 +39,7 @@ function FilterPanel({ filters, setFilters, onClose }: {
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 240, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -90,7 +90,7 @@ function SortPanel({ sort, setSort, onClose }: { sort: SortField; setSort: (s: S
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 4, width: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       {options.map(opt => (
@@ -116,7 +116,7 @@ function GroupPanel({ group, setGroup, onClose }: { group: GroupField; setGroup:
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 12, width: 240, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -145,7 +145,7 @@ function OptionsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div ref={ref} style={{
       position: 'absolute', top: '100%', right: 0, zIndex: 50, marginTop: 4,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 4, width: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       {['Show subtasks', 'Show completed tasks', 'Color columns', 'Compact mode'].map(label => (
@@ -172,17 +172,17 @@ function CardContextMenu({ onDelete, onClose }: {
   return (
     <div ref={ref} style={{
       position: 'absolute', top: 0, right: 0, zIndex: 60, marginTop: 28,
-      background: '#2a2b2d', border: '1px solid var(--border-default)', borderRadius: 8,
+      background: 'var(--bg-content)', border: '1px solid var(--border-default)', borderRadius: 8,
       padding: 4, width: 180, boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
     }}>
       <button onClick={(e) => { e.stopPropagation(); onDelete(); onClose(); }} style={{
-        display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', width: '100%',
-        borderRadius: 4, fontSize: 13, color: 'var(--color-error)',
+        display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', width: '100%',
+        borderRadius: 4, fontSize: 14, color: '#e8637a',
       }}
         onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
       >
-        <Trash2 size={13} /> Delete task
+        <Trash2 size={16} /> Delete task
       </button>
     </div>
   );
@@ -367,26 +367,15 @@ export function ProjectBoardView() {
     <div>
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          <button onClick={() => setAddingTo(projectSections[0]?.id)} style={{
-            display: 'flex', alignItems: 'center', gap: 5, background: 'var(--color-success)', color: '#fff',
-            padding: '5px 14px', fontSize: 13, fontWeight: 500, borderRadius: '6px 0 0 6px',
-            border: 'none', cursor: 'pointer',
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-            <Plus size={13} strokeWidth={2.5} />Add task
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', padding: '5px 6px',
-            background: 'var(--color-success)', color: '#fff', border: 'none',
-            borderLeft: '1px solid rgba(255,255,255,0.2)', borderRadius: '0 6px 6px 0', cursor: 'pointer',
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-            <ChevronDown size={13} strokeWidth={2} />
-          </button>
-        </div>
+        <button onClick={() => setAddingTo(projectSections[0]?.id)} style={{
+          display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: 'var(--text-secondary)',
+          padding: '5px 12px', fontSize: 12, fontWeight: 400, borderRadius: 6,
+          border: '1px solid var(--border-default)',
+        }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+          <Plus size={13} strokeWidth={2} />Add task
+        </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
           {/* Filter */}
           <div style={{ position: 'relative' }}>

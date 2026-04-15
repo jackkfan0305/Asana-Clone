@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { currentUserId, users, organization, teams, teamMembers } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
+import { useTheme, type Theme } from '../../../data/ThemeContext';
 
 type Tab = 'profile' | 'account' | 'notifications' | 'display' | 'apps';
 
@@ -182,10 +183,33 @@ function NotificationSettings() {
 }
 
 function DisplaySettings() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <div>
       <SectionLabel>Theme</SectionLabel>
-      <FieldRow label="Color theme" value="Dark" />
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '10px 0', borderBottom: '1px solid var(--border-divider)',
+      }}>
+        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Color theme</span>
+        <select
+          value={theme}
+          onChange={e => setTheme(e.target.value as Theme)}
+          style={{
+            fontSize: 13,
+            color: 'var(--text-primary)',
+            background: 'var(--bg-input)',
+            border: '1px solid var(--border-input)',
+            borderRadius: 'var(--radius-input)',
+            padding: '4px 8px',
+            cursor: 'pointer',
+          }}
+        >
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
       <FieldRow label="Sidebar" value="Expanded" />
 
       <SectionLabel>Language & Region</SectionLabel>

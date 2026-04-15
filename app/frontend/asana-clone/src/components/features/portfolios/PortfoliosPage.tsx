@@ -28,7 +28,7 @@ export function PortfoliosPage() {
         }}>Browse all</button>
       </div>
       {/* Full-width separator connecting to sidebar */}
-      <div style={{ height: 1, background: '#404244', margin: '0.5px -24px 16px' }} />
+      <div style={{ height: 1, background: 'var(--border-default)', margin: '0.5px -24px 16px' }} />
 
       {portfolios.map(portfolio => {
         const owner = users.find(u => u.id === portfolio.ownerId);

@@ -187,7 +187,7 @@ export function HomePage() {
                 {tasksMenuOpen && (
                   <div style={{
                     position: 'absolute', top: '100%', right: 0, marginTop: 4,
-                    background: '#2a2b2d', border: '1px solid var(--border-default)',
+                    background: 'var(--bg-card)', border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-card)', padding: '4px 0',
                     boxShadow: 'var(--shadow-dropdown)', zIndex: 20, minWidth: 200,
                   }}>
@@ -349,7 +349,7 @@ export function HomePage() {
                 {projectsMenuOpen && (
                   <div style={{
                     position: 'absolute', top: '100%', right: 0, marginTop: 4,
-                    background: '#2a2b2d', border: '1px solid var(--border-default)',
+                    background: 'var(--bg-card)', border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-card)', padding: '4px 0',
                     boxShadow: 'var(--shadow-dropdown)', zIndex: 20, minWidth: 200,
                   }}>

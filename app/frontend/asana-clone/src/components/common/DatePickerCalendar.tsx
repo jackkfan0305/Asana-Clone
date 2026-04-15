@@ -161,7 +161,7 @@ export function DatePickerCalendar({
       ref={ref}
       style={{
         position: 'absolute', top: '100%', marginTop: 4, zIndex: 200,
-        width: 300, background: '#232527', border: '1px solid var(--border-divider)',
+        width: 300, background: 'var(--bg-card)', border: '1px solid var(--border-divider)',
         borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
         padding: 0,
         ...positionStyle,
@@ -176,7 +176,7 @@ export function DatePickerCalendar({
               flex: 1, display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 10px', borderRadius: 6,
               border: `1px solid ${mode === 'start' ? 'var(--text-primary)' : 'var(--border-input)'}`,
-              cursor: 'pointer', background: '#1a1c1e',
+              cursor: 'pointer', background: 'var(--bg-content)',
             }}
           >
             <span style={{ fontSize: 12, color: startDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
@@ -195,7 +195,7 @@ export function DatePickerCalendar({
               flex: 1, display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 10px', borderRadius: 6,
               border: `1px solid ${mode === 'due' ? 'var(--text-primary)' : 'var(--border-input)'}`,
-              cursor: 'pointer', background: '#1a1c1e',
+              cursor: 'pointer', background: 'var(--bg-content)',
             }}
           >
             <span style={{ fontSize: 12, color: dueDate ? 'var(--text-primary)' : 'var(--text-placeholder)', flex: 1 }}>
