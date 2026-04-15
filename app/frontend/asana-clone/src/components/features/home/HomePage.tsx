@@ -448,11 +448,11 @@ export function HomePage() {
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {p.name}
                       </div>
-                      {dueSoonCount > 0 && (
-                        <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
-                          {dueSoonCount} task{dueSoonCount !== 1 ? 's' : ''} due soon
-                        </div>
-                      )}
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
+                        {dueSoonCount > 0
+                          ? `${dueSoonCount} task${dueSoonCount !== 1 ? 's' : ''} due soon`
+                          : `${projectTasks.length} task${projectTasks.length !== 1 ? 's' : ''}`}
+                      </div>
                     </div>
                   </div>
                 );
