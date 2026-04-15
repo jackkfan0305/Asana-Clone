@@ -3,7 +3,7 @@ import { useApp } from '../../data/AppContext';
 import { useAuth } from '../../api/authStore';
 import { logout } from '../../api/client';
 import { useNavigate } from 'react-router-dom';
-import { Search, Settings, ChevronLeft, ChevronRight, Clock, Menu, Plus, LogOut, User } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Clock, Menu, Plus, LogOut, User, HelpCircle, Settings } from 'lucide-react';
 
 // Asana three-dot logo mark
 function AsanaLogo() {
@@ -52,7 +52,7 @@ export function Topbar() {
       <button
         onClick={() => navigate('/create-project')}
         style={{
-          background: '#404040',
+          background: '#3d3e40',
           color: '#fff',
           padding: '4px 16px 4px 4px',
           borderRadius: 50,
@@ -66,8 +66,8 @@ export function Topbar() {
           cursor: 'pointer',
           letterSpacing: -0.2,
         }}
-        onMouseEnter={e => e.currentTarget.style.background = '#4a4a4a'}
-        onMouseLeave={e => e.currentTarget.style.background = '#404040'}
+        onMouseEnter={e => e.currentTarget.style.background = '#484849'}
+        onMouseLeave={e => e.currentTarget.style.background = '#3d3e40'}
       >
         <span style={{
           width: 28,
@@ -127,6 +127,7 @@ export function Topbar() {
             letterSpacing: -0.3,
           }}>asana</span>
         </div>
+        {iconBtn(<HelpCircle size={16} strokeWidth={1.5} />, 'Help')}
         {iconBtn(<Settings size={16} strokeWidth={1.5} />, 'Settings', () => navigate('/settings'))}
         <UserMenu />
       </div>
