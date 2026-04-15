@@ -22,8 +22,10 @@ from auth import (
     delete_session,
     get_current_user,
     get_session_token,
+    hash_password,
 )
 from db import Base, SessionLocal, engine, get_db
+from models import User
 from tools import dispatch, get_tools
 
 
@@ -192,6 +194,75 @@ def login(req: LoginRequest, db: DBSession = Depends(get_db)):
     user = authenticate_user(db, req.username, req.password)
     if not user:
         return JSONResponse(status_code=401, content={"error": "Invalid credentials"})
+    token = create_session(db, user.id)
+    response = JSONResponse(content={
+        "token": token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "avatar_url": user.avatar_url,
+        },
+    })
+    response.set_cookie("session_token", token, httponly=True, samesite="lax", max_age=7 * 24 * 3600)
+    return response
+
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: str
+
+
+@app.post("/auth/register")
+def register(req: RegisterRequest, db: DBSession = Depends(get_db)):
+    # Validate input
+    errors = []
+    if len(req.username) < 3:
+        errors.append("Username must be at least 3 characters")
+    if not all(c.isalnum() or c in "._" for c in req.username):
+        errors.append("Username can only contain letters, numbers, dots, and underscores")
+    if len(req.password) < 8:
+        errors.append("Password must be at least 8 characters")
+    if not req.name.strip():
+        errors.append("Name is required")
+    if not req.email or "@" not in req.email:
+        errors.append("Valid email is required")
+    if errors:
+        return JSONResponse(status_code=400, content={"error": errors[0]})
+
+    # Check uniqueness
+    if db.query(User).filter(User.username == req.username).first():
+        return JSONResponse(status_code=409, content={"error": "Username already taken"})
+    if db.query(User).filter(User.email == req.email).first():
+        return JSONResponse(status_code=409, content={"error": "Email already taken"})
+
+    # Generate next user ID
+    from sqlalchemy import func as sa_func
+    max_id = db.query(sa_func.max(User.id)).scalar()
+    if max_id and max_id.startswith("usr_"):
+        next_num = int(max_id.split("_")[1]) + 1
+    else:
+        next_num = 1
+    user_id = f"usr_{next_num:03d}"
+
+    # Create user
+    user = User(
+        id=user_id,
+        username=req.username,
+        password_hash=hash_password(req.password),
+        name=req.name.strip(),
+        email=req.email.strip().lower(),
+        role="standard",
+        organization_id="org_001",
+    )
+    db.add(user)
+    db.commit()
+
+    # Auto-login: create session
     token = create_session(db, user.id)
     response = JSONResponse(content={
         "token": token,
