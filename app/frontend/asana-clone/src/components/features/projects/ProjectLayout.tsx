@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Outlet, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../../data/AppContext';
 import { Avatar } from '../../common/Avatar';
+import { Star, ChevronDown, Share2, SlidersHorizontal } from 'lucide-react';
 
 const viewTabs: { key: string; label: string; path: string }[] = [
   { key: 'overview', label: 'Overview', path: 'overview' },
@@ -11,6 +12,8 @@ const viewTabs: { key: string; label: string; path: string }[] = [
   { key: 'dashboard', label: 'Dashboard', path: 'dashboard' },
   { key: 'calendar', label: 'Calendar', path: 'calendar' },
   { key: 'workflow', label: 'Workflow', path: 'workflow' },
+  { key: 'messages', label: 'Messages', path: 'messages' },
+  { key: 'files', label: 'Files', path: 'files' },
 ];
 
 const statusOptions = [
@@ -95,7 +98,7 @@ export function ProjectLayout() {
   const statusLabel = project.status === 'on_track' ? 'On track' : project.status === 'at_risk' ? 'At risk' : 'Off track';
 
   // Filter tabs to only show enabled views for this project
-  const enabledViews = project.enabledViews || ['overview', 'list', 'board', 'timeline', 'dashboard'];
+  const enabledViews = project.enabledViews || ['overview', 'list', 'board', 'timeline', 'dashboard', 'calendar', 'workflow', 'messages', 'files'];
   const filteredTabs = viewTabs.filter(vt => enabledViews.includes(vt.key));
 
   // Determine active tab from URL
@@ -117,10 +120,21 @@ export function ProjectLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Portfolio breadcrumb */}
+      {project.teamId && (
+        <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 2 }}>
+          My first portfolio
+        </div>
+      )}
+
       {/* Project header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
         <ProjectIcon color={project.color} />
-        <h1 style={{ font: 'var(--font-h1)' }}>{project.name}</h1>
+        <h1 style={{ font: 'var(--font-h1)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          {project.name}
+          <ChevronDown size={14} strokeWidth={2} style={{ color: 'var(--text-secondary)', cursor: 'pointer' }} />
+        </h1>
+        <Star size={16} strokeWidth={1.5} style={{ color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0 }} />
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => setShowStatusDropdown(v => !v)}
@@ -146,7 +160,22 @@ export function ProjectLayout() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {members.slice(0, 3).map(uid => <Avatar key={uid} userId={uid} size={24} />)}
         </div>
-        <button style={{ padding: '4px 8px', color: 'var(--text-secondary)' }}>...</button>
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px',
+          borderRadius: 6, background: 'var(--color-primary)', color: '#fff',
+          fontSize: 13, fontWeight: 500, cursor: 'pointer',
+        }}>
+          <Share2 size={13} strokeWidth={2} />
+          Share
+        </button>
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px',
+          borderRadius: 6, border: '1px solid var(--border-default)', background: 'transparent',
+          color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer',
+        }}>
+          <SlidersHorizontal size={13} strokeWidth={2} />
+          Customize
+        </button>
       </div>
 
       {/* View tabs — full-width border connects to sidebar divider */}
