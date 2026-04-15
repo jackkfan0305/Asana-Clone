@@ -13,7 +13,7 @@ def test_tools_endpoint(client):
     data = resp.json()
     assert "tools" in data
     tools = data["tools"]
-    assert len(tools) == 83
+    assert len(tools) == 84
 
     # Check structure
     tool = tools[0]
