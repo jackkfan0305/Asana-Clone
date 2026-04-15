@@ -65,7 +65,7 @@ export function Sidebar() {
   const sectionHeader = (label: string, showPlus?: boolean) => (
     <div style={{
       padding: '14px 12px 6px 16px', marginLeft: 6,
-      fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+      fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'none', fontWeight: 600,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       letterSpacing: 0.5,
     }}>
@@ -118,7 +118,7 @@ export function Sidebar() {
             {/* Collapsible Work section with projects & portfolios */}
             <div style={{
               padding: '10px 12px 4px 16px', marginLeft: 6,
-              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'none', fontWeight: 600,
               display: 'flex', alignItems: 'center', gap: 4, letterSpacing: 0.5,
               cursor: 'pointer',
             }}
@@ -219,7 +219,7 @@ export function Sidebar() {
             {/* Team collapsible header */}
             <div style={{
               padding: '10px 12px 4px 16px', marginLeft: 6,
-              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'uppercase', fontWeight: 600,
+              fontSize: 11, color: 'var(--text-placeholder)', textTransform: 'none', fontWeight: 600,
               display: 'flex', alignItems: 'center', gap: 4, letterSpacing: 0.5,
               cursor: 'pointer',
             }}
