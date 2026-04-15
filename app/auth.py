@@ -1,11 +1,25 @@
 from datetime import datetime, timedelta, timezone
 import secrets
 
+import bcrypt
 from fastapi import Request, HTTPException, Depends
 from sqlalchemy.orm import Session as DBSession
 
 from db import get_db
 from models import User, Session as SessionModel
+
+
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt."""
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    """Verify a password against a stored hash. Supports both bcrypt and legacy plaintext."""
+    if stored_hash.startswith("$2b$") or stored_hash.startswith("$2a$"):
+        return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
+    # Legacy plaintext fallback for existing seed data
+    return password == stored_hash
 
 
 def create_session(db: DBSession, user_id: str) -> str:
@@ -52,7 +66,7 @@ def authenticate_user(db: DBSession, username: str, password: str) -> User | Non
     user = db.query(User).filter(User.username == username).first()
     if not user:
         return None
-    if user.password_hash != password:
+    if not verify_password(password, user.password_hash):
         return None
     user.last_login = datetime.now(timezone.utc)
     db.commit()

@@ -69,6 +69,25 @@ export async function login(username: string, password: string): Promise<LoginRe
   return res.json();
 }
 
+export async function register(
+  username: string,
+  password: string,
+  name: string,
+  email: string,
+): Promise<LoginResponse> {
+  const res = await fetch(`${BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username, password, name, email }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Registration failed' }));
+    throw new Error(data.error || 'Registration failed');
+  }
+  return res.json();
+}
+
 export async function logout(): Promise<void> {
   await fetch(`${BASE_URL}/auth/logout`, {
     method: 'POST',

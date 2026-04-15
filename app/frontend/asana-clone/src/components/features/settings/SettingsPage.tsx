@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { currentUserId, users, organization, teams, teamMembers } from '../../../data/seed';
+import { organization, teams, teamMembers } from '../../../data/seed';
 import { Avatar } from '../../common/Avatar';
 import { useTheme, type Theme } from '../../../data/ThemeContext';
+import { useAuth } from '../../../api/authStore';
+import type { AuthUser } from '../../../api/client';
 
 type Tab = 'profile' | 'account' | 'notifications' | 'display' | 'apps';
 
@@ -15,9 +17,10 @@ const tabs: { key: Tab; label: string }[] = [
 
 export function SettingsPage() {
   const [tab, setTab] = useState<Tab>('profile');
-  const currentUser = users.find(u => u.id === currentUserId)!;
+  const { user: authUser } = useAuth();
+  const currentUser = authUser;
   const userTeams = teamMembers
-    .filter(tm => tm.userId === currentUserId)
+    .filter(tm => tm.userId === authUser?.id)
     .map(tm => teams.find(t => t.id === tm.teamId)!)
     .filter(Boolean);
 
@@ -56,8 +59,8 @@ export function SettingsPage() {
         Settings changes are not persisted in this demo.
       </div>
 
-      {tab === 'profile' && <ProfileSettings user={currentUser} userTeams={userTeams} />}
-      {tab === 'account' && <AccountSettings user={currentUser} />}
+      {tab === 'profile' && currentUser && <ProfileSettings user={currentUser} userTeams={userTeams} />}
+      {tab === 'account' && currentUser && <AccountSettings user={currentUser} />}
       {tab === 'notifications' && <NotificationSettings />}
       {tab === 'display' && <DisplaySettings />}
       {tab === 'apps' && <AppsSettings />}
@@ -112,11 +115,11 @@ function ToggleRow({ label, defaultOn = false }: { label: string; defaultOn?: bo
   );
 }
 
-function ProfileSettings({ user, userTeams }: { user: typeof users[0]; userTeams: typeof teams }) {
+function ProfileSettings({ user, userTeams }: { user: AuthUser; userTeams: typeof teams }) {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-        <Avatar userId={user.id} size={64} />
+        <Avatar userId={user.id} size={64} name={user.name} />
         <div>
           <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--text-primary)' }}>{user.name}</div>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{user.role}</div>
@@ -148,7 +151,7 @@ function ProfileSettings({ user, userTeams }: { user: typeof users[0]; userTeams
   );
 }
 
-function AccountSettings({ user }: { user: typeof users[0] }) {
+function AccountSettings({ user }: { user: AuthUser }) {
   return (
     <div>
       <SectionLabel>Account Details</SectionLabel>

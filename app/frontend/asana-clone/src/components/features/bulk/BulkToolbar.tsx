@@ -1,7 +1,9 @@
 import { useApp } from '../../../data/AppContext';
-import { currentUserId } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 export function BulkToolbar() {
   const { selectedTasks, setSelectedTasks, bulkUpdate, bulkDelete } = useApp();
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
 
   if (selectedTasks.length === 0) return null;
 

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { users, currentUserId, teamMembers } from '../../data/seed';
+import { users, teamMembers } from '../../data/seed';
+import { useAuth } from '../../api/authStore';
 import { Avatar } from './Avatar';
 import { X, Check } from 'lucide-react';
 import type { User } from '../../types';
@@ -20,6 +21,8 @@ interface AssigneeDropdownProps {
 export function AssigneeDropdown({ assigneeId, onSelect, teamId, position = 'below-left', onClose }: AssigneeDropdownProps) {
   const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement>(null);
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

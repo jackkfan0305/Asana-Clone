@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useApp } from '../../../data/AppContext';
-import { currentUserId } from '../../../data/seed';
+import { useAuth } from '../../../api/authStore';
 import { Plus, ChevronLeft, ChevronRight, Minus, Filter, ArrowUpDown, Settings, ChevronDown, Trash2 } from 'lucide-react';
 
 type ZoomLevel = 'hours' | 'days' | 'weeks' | 'months' | 'quarters' | 'half-year' | 'years';
@@ -207,6 +207,8 @@ function generateGroupHeaders(zoom: ZoomLevel, cols: ReturnType<typeof generateC
 export function TimelinePage() {
   const { projectId } = useParams();
   const { tasks, sections, projects, setSelectedTaskId, addTask, updateTask, addSection, deleteTask } = useApp();
+  const { user: authUser } = useAuth();
+  const currentUserId = authUser?.id ?? '';
   const [contextMenu, setContextMenu] = useState<{ taskId: string; x: number; y: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
