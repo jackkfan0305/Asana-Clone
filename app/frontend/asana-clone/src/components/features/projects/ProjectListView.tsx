@@ -5,7 +5,7 @@ import { Checkbox } from '../../common/Checkbox';
 import { Avatar } from '../../common/Avatar';
 import { StatusBadge } from '../../common/Badge';
 import {
-  Filter, ArrowUpDown, Group, Search, Plus, X, GripVertical,
+  Filter, ArrowUpDown, Group, Search, Plus, X, GripVertical, ChevronDown,
 } from 'lucide-react';
 
 type SortField = 'none' | 'start_date' | 'due_date' | 'created_on' | 'alphabetical';
@@ -237,15 +237,26 @@ export function ProjectListView() {
     <div>
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '12px 0' }}>
-        <button onClick={() => handleShowAddRow(projectSections[0]?.id)} style={{
-          display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: 'var(--text-secondary)',
-          padding: '5px 12px', fontSize: 12, fontWeight: 400, borderRadius: 6,
-          border: '1px solid var(--border-default)',
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-sidebar-hover)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-          <Plus size={13} strokeWidth={2} />Add task
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          <button onClick={() => handleShowAddRow(projectSections[0]?.id)} style={{
+            display: 'flex', alignItems: 'center', gap: 5, background: 'var(--color-success)', color: '#fff',
+            padding: '5px 14px', fontSize: 13, fontWeight: 500, borderRadius: '6px 0 0 6px',
+            border: 'none', cursor: 'pointer',
+          }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+            <Plus size={13} strokeWidth={2.5} />Add task
+          </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', padding: '5px 6px',
+            background: 'var(--color-success)', color: '#fff', border: 'none',
+            borderLeft: '1px solid rgba(255,255,255,0.2)', borderRadius: '0 6px 6px 0', cursor: 'pointer',
+          }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+            <ChevronDown size={13} strokeWidth={2} />
+          </button>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
           {/* Filter */}
           <div style={{ position: 'relative' }}>
