@@ -1,5 +1,16 @@
 # Asana Clone
 
+> [!IMPORTANT]
+> **This repository is deprecated and archived.**
+>
+> The canonical version now lives at **https://github.com/collinear-ai/Asana-Clone**.
+>
+> We duplicated it to the Collinear organisation so the rl-gym / clone-task evaluation work has a single source of truth alongside the other clones (`gmail`, `slackdesktop-clone`, `google-docs`, `googlesheetsweb_clone`, `github-clone`, `zendesk-clone`, etc.).
+>
+> @jackkfan0305 — FYI, this repo is now read-only. If you need to push anything new, please open a PR against [`collinear-ai/Asana-Clone`](https://github.com/collinear-ai/Asana-Clone) or ping @renantrendt on Slack. You've been invited as a `write` collaborator on the new repo.
+
+---
+
 A full-stack Asana clone built as a Docker-packaged training environment for AI agents. Features a FastAPI backend, React + TypeScript frontend, and PostgreSQL database with 95% visual fidelity to Asana's dark-mode UI.
 
 ## Tech Stack
